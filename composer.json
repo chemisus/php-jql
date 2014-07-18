@@ -1,0 +1,12 @@
+{
+    "name": "chemisus/php-orm-test",
+    "require": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "src",
+            "test"
+        ]
+    }
+}
