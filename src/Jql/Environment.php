@@ -6,14 +6,21 @@ use SebastianBergmann\Exporter\Exception;
 
 class Environment
 {
+    private $database;
     private $operations;
     private $parameters;
     private $stack = array();
 
-    public function __construct(OperationContainer $operations, array $parameters)
+    public function __construct(OperationContainer $operations, array $parameters = array(), Database $database = null)
     {
+        $this->database = $database;
         $this->operations = $operations;
         $this->parameters = $parameters;
+    }
+
+    public function table($name)
+    {
+        return $this->database->table($name);
     }
 
     public function parameter($key)
@@ -26,10 +33,9 @@ class Environment
         return $this->operations[$operation->op]->run($this, $operation);
     }
 
-    public function push($key, $value)
+    public function push($value)
     {
-//        array_push($this->stack, array($key, $value));
-        $this->stack[$key] = $value;
+        $this->stack[] = $value;
     }
 
     public function pop()
@@ -37,11 +43,22 @@ class Environment
         array_pop($this->stack);
     }
 
-    public function get($path)
+    public function current()
     {
-        $keys = explode('.', $path);
+        $keys = array_keys($this->stack);
 
-        $value = $this->stack;
+        return $this->stack[array_pop($keys)];
+    }
+
+    public function get($value, $path)
+    {
+        $path = trim($path);
+
+        if (!$path) {
+            return $value;
+        }
+
+        $keys = explode('.', $path);
 
         while (count($keys)) {
             $key = array_shift($keys);

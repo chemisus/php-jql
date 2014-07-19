@@ -3,19 +3,29 @@
 class JqlTest extends PHPUnit_Framework_TestCase
 {
     private $operations;
-    private $query;
+    private $query_builder;
+    private $database;
 
     public function setUp()
     {
         parent::setUp();
 
+        $tables = array(
+            'users' => array(
+                array('name' => 'terrence'),
+                array('name' => 'sue'),
+                array('name' => 'mike'),
+            )
+        );
+
+        $this->database = new \Jql\Database($tables);
         $this->operations = new \Jql\OperationContainer();
-        $this->query = new \Jql\QueryBuilder($this->operations);
+        $this->query_builder = new \Jql\QueryBuilder($this->operations);
     }
 
     public function testTrue()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->true();
 
@@ -24,7 +34,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testFalse()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->false();
 
@@ -33,7 +43,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testEqualTrue()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->equal($q->true(), $q->true());
 
@@ -42,7 +52,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testEqualFalse()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->equal($q->false(), $q->true());
 
@@ -51,7 +61,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testNot()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->not($q->false());
 
@@ -60,7 +70,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testAndTrue()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->and(array(
             $q->true(),
@@ -73,7 +83,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testAndFalse()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->and(array(
             $q->true(),
@@ -86,7 +96,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testOrTrue()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->or(array(
             $q->false(),
@@ -99,7 +109,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testOrFalse()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->or(array(
             $q->false(),
@@ -112,7 +122,7 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testConst()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->const(true);
 
@@ -121,47 +131,51 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
     public function testParam()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
         $jql = $q->param('a');
 
         $this->assertTrue($q->run($jql, array('a' => true)));
     }
 
-    public function testMap()
+    public function testFilter()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
-        $jql = $q->map('a', $q->const(array('a', 'b', 'c')), $q->true());
+        $values = array('a', 'b', 'c');
+
+        $jql = $q->filter($q->const($values), $q->true());
 
         $this->assertCount(3, $q->run($jql));
     }
 
-    public function testGet()
+    public function testCurrent()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
-        $jql = $q->map('v', $q->const(array('a', 'b', 'c')), $q->equal($q->get('v'), $q->const('a')));
+        $values = array('a', 'b', 'c');
+
+        $jql = $q->filter($q->const($values), $q->equal($q->current(), $q->const('a')));
 
         $this->assertCount(1, $q->run($jql));
     }
 
-    public function testGet2()
+    public function testCurrent2()
     {
-        $q = $this->query;
+        $q = $this->query_builder;
 
-        $users = array(
+        $tables = array(
             array('name' => 'terrence'),
             array('name' => 'sue'),
             array('name' => 'mike'),
         );
 
-        $jql = $q->map('user',
-            $q->const($users),
+        $jql = $q->filter(
+            $q->const($tables),
             $q->or(array(
-                $q->equal($q->get('user.name'), $q->const('terrence')),
-                $q->equal($q->get('user.name'), $q->const('mike')),
-                $q->equal($q->get('user.name'), $q->const('steve')),
+                $q->equal($q->current('name'), $q->const('terrence')),
+                $q->equal($q->current('name'), $q->const('mike')),
+                $q->equal($q->current('name'), $q->const('steve')),
             ))
         );
 

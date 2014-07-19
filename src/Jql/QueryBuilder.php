@@ -11,9 +11,9 @@ class QueryBuilder
         $this->operations = $operations;
     }
 
-    public function run($operation, $parameters = array())
+    public function run($operation, $parameters = array(), Database $database = null)
     {
-        $environment = new Environment($this->operations, $parameters);
+        $environment = new Environment($this->operations, $parameters, $database);
 
         return $environment->run($operation);
     }

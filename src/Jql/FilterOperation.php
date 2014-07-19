@@ -2,13 +2,12 @@
 
 namespace Jql;
 
-class MapOperation
+class FilterOperation
 {
-    public function make($key, $source, $filter)
+    public function make($source, $filter)
     {
         $operation = new \stdClass();
-        $operation->op = "map";
-        $operation->key = $key;
+        $operation->op = "filter";
         $operation->source = $source;
         $operation->filter = $filter;
         return $operation;
@@ -19,7 +18,7 @@ class MapOperation
         $values = array();
 
         foreach ($environment->run($operation->source) as $value) {
-            $environment->push($operation->key, $value);
+            $environment->push($value);
 
             if ($environment->run($operation->filter)) {
                 $values[] = $value;
