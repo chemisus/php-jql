@@ -4,7 +4,7 @@ namespace Jql;
 
 class CurrentOperation
 {
-    public function make($path = '')
+    public function make($path)
     {
         $operation = new \stdClass();
         $operation->op = "current";
@@ -14,6 +14,6 @@ class CurrentOperation
 
     public function run(Environment $environment, \stdClass $operation)
     {
-        return $environment->get($environment->current(), $operation->path);
+        return $environment->get($environment->current(), $environment->run($operation->path));
     }
 }

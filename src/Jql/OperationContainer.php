@@ -23,8 +23,10 @@ class OperationContainer implements \ArrayAccess
             'const' => new ConstOperation(),
             'param' => new ParamOperation(),
             'filter' => new FilterOperation(),
-            'get' => new GetOperation(),
+            'map' => new MapOperation(),
             'current' => new CurrentOperation(),
+            'key' => new KeyOperation(),
+            'stack' => new StackOperation(),
         );
     }
 

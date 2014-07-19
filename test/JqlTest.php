@@ -155,30 +155,48 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
         $values = array('a', 'b', 'c');
 
-        $jql = $q->filter($q->const($values), $q->equal($q->current(), $q->const('a')));
+        $jql = $q->filter($q->const($values), $q->equal($q->current($q->const('')), $q->const('a')));
 
         $this->assertCount(1, $q->run($jql));
     }
 
-    public function testCurrent2()
+    public function testFilterAndCurrent()
     {
         $q = $this->query_builder;
 
-        $tables = array(
+        $table = array(
             array('name' => 'terrence'),
             array('name' => 'sue'),
             array('name' => 'mike'),
         );
 
         $jql = $q->filter(
-            $q->const($tables),
+            $q->const($table),
             $q->or(array(
-                $q->equal($q->current('name'), $q->const('terrence')),
-                $q->equal($q->current('name'), $q->const('mike')),
-                $q->equal($q->current('name'), $q->const('steve')),
+                $q->equal($q->current($q->const('name')), $q->const('terrence')),
+                $q->equal($q->current($q->const('name')), $q->const('mike')),
+                $q->equal($q->current($q->const('name')), $q->const('steve')),
             ))
         );
 
         $this->assertCount(2, $q->run($jql));
+    }
+
+    public function testMap()
+    {
+        $q = $this->query_builder;
+
+        $table = array(
+            array('name' => 'terrence'),
+            array('name' => 'sue'),
+            array('name' => 'mike'),
+        );
+
+        $jql = $q->map(
+            $q->const($table),
+            $q->current($q->const('name'))
+        );
+
+        $this->assertEquals(array('terrence', 'sue', 'mike'), $q->run($jql));
     }
 }

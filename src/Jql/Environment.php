@@ -2,8 +2,6 @@
 
 namespace Jql;
 
-use SebastianBergmann\Exporter\Exception;
-
 class Environment
 {
     private $database;
@@ -33,9 +31,9 @@ class Environment
         return $this->operations[$operation->op]->run($this, $operation);
     }
 
-    public function push($value)
+    public function push($value, $key = null)
     {
-        $this->stack[] = $value;
+        $this->stack[] = array($value, $key);
     }
 
     public function pop()
@@ -43,11 +41,23 @@ class Environment
         array_pop($this->stack);
     }
 
+    public function stack()
+    {
+        return $this->stack;
+    }
+
+    public function key()
+    {
+        $keys = array_keys($this->stack);
+
+        return $this->stack[array_pop($keys)][1];
+    }
+
     public function current()
     {
         $keys = array_keys($this->stack);
 
-        return $this->stack[array_pop($keys)];
+        return $this->stack[array_pop($keys)][0];
     }
 
     public function get($value, $path)
