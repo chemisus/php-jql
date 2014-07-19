@@ -21,6 +21,7 @@ class OperationContainer implements \ArrayAccess
             'and' => new AndsOperation(),
             'or' => new OrsOperation(),
             'const' => new ConstOperation(),
+            'param' => new ParamOperation(),
         );
     }
 

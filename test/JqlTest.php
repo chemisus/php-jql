@@ -118,4 +118,13 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($q->run($jql));
     }
+
+    public function testParam()
+    {
+        $q = $this->query;
+
+        $jql = $q->param('a');
+
+        $this->assertTrue($q->run($jql, array('a' => true)));
+    }
 }
