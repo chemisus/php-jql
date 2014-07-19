@@ -127,4 +127,44 @@ class JqlTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($q->run($jql, array('a' => true)));
     }
+
+    public function testMap()
+    {
+        $q = $this->query;
+
+        $jql = $q->map('a', $q->const(array('a', 'b', 'c')), $q->true());
+
+        $this->assertCount(3, $q->run($jql));
+    }
+
+    public function testGet()
+    {
+        $q = $this->query;
+
+        $jql = $q->map('v', $q->const(array('a', 'b', 'c')), $q->equal($q->get('v'), $q->const('a')));
+
+        $this->assertCount(1, $q->run($jql));
+    }
+
+    public function testGet2()
+    {
+        $q = $this->query;
+
+        $users = array(
+            array('name' => 'terrence'),
+            array('name' => 'sue'),
+            array('name' => 'mike'),
+        );
+
+        $jql = $q->map('user',
+            $q->const($users),
+            $q->or(array(
+                $q->equal($q->get('user.name'), $q->const('terrence')),
+                $q->equal($q->get('user.name'), $q->const('mike')),
+                $q->equal($q->get('user.name'), $q->const('steve')),
+            ))
+        );
+
+        $this->assertCount(2, $q->run($jql));
+    }
 }

@@ -22,6 +22,8 @@ class OperationContainer implements \ArrayAccess
             'or' => new OrsOperation(),
             'const' => new ConstOperation(),
             'param' => new ParamOperation(),
+            'map' => new MapOperation(),
+            'get' => new GetOperation(),
         );
     }
 
