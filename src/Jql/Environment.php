@@ -5,14 +5,14 @@ namespace Jql;
 class Environment
 {
     private $database;
-    private $operations;
     private $parameters;
-    private $stack = array();
 
-    public function __construct(OperationContainer $operations, array $parameters = array(), Database $database = null)
+    private $keys = array();
+    private $values = array();
+
+    public function __construct(Database $database = null, array $parameters = array())
     {
         $this->database = $database;
-        $this->operations = $operations;
         $this->parameters = $parameters;
     }
 
@@ -26,38 +26,35 @@ class Environment
         return $this->parameters[$key];
     }
 
-    public function run($operation)
+    public function push($key, $value)
     {
-        return $this->operations[$operation->op]->run($this, $operation);
-    }
-
-    public function push($value, $key = null)
-    {
-        $this->stack[] = array($value, $key);
+        array_push($this->keys, $key);
+        array_push($this->values, $value);
     }
 
     public function pop()
     {
-        array_pop($this->stack);
+        array_pop($this->keys);
+        array_pop($this->values);
     }
 
     public function stack()
     {
-        return $this->stack;
+        return $this->values;
     }
 
     public function key()
     {
-        $keys = array_keys($this->stack);
+        $keys = array_values($this->keys);
 
-        return $this->stack[array_pop($keys)][1];
+        return array_pop($keys);
     }
 
     public function current()
     {
-        $keys = array_keys($this->stack);
+        $values = array_values($this->values);
 
-        return $this->stack[array_pop($keys)][0];
+        return array_pop($values);
     }
 
     public function get($value, $path)

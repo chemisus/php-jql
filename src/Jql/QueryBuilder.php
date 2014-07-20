@@ -6,8 +6,11 @@ use Jql\Operations\AndOperation;
 use Jql\Operations\ConstantOperation;
 use Jql\Operations\EqualOperation;
 use Jql\Operations\FalseOperation;
+use Jql\Operations\MapOperation;
 use Jql\Operations\NotOperation;
+use Jql\Operations\ObjectOperation;
 use Jql\Operations\OrOperation;
+use Jql\Operations\SelectOperation;
 use Jql\Operations\TrueOperation;
 
 class QueryBuilder
@@ -72,6 +75,34 @@ class QueryBuilder
     public function ors(OperationContainer $values)
     {
         return new OrOperation($values);
+    }
+
+    /**
+     * @param Operation $lhs
+     * @param Operation $rhs
+     * @return MapOperation
+     */
+    public function map(Operation $lhs, Operation $rhs)
+    {
+        return new MapOperation($lhs, $rhs);
+    }
+
+    /**
+     * @param OperationContainer $values
+     * @return ObjectOperation
+     */
+    public function object(OperationContainer $values)
+    {
+        return new ObjectOperation($values);
+    }
+
+    /**
+     * @param Operation $value
+     * @return SelectOperation
+     */
+    public function select(Operation $value)
+    {
+        return new SelectOperation($value);
     }
 
 //    public function run($operation, $parameters = array(), Database $database = null)

@@ -2,7 +2,9 @@
 
 namespace Jql;
 
-class AbstractBinaryOperation extends AbstractOperation
+use stdClass;
+
+abstract class AbstractBinaryOperation extends AbstractOperation
 {
     /**
      * @var \Jql\Operation
@@ -31,11 +33,6 @@ class AbstractBinaryOperation extends AbstractOperation
     {
         $object->lhs = $this->lhs->toJson();
         $object->rhs = $this->rhs->toJson();
-    }
-
-    public function run(Environment $environment)
-    {
-        return $this->lhs->run($environment) === $this->rhs->run($environment);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace Jql\Operations;
 
 use Jql\Environment;
-use Jql\OperationContainer;
 use Jql\QueryBuilder;
 use Mockery;
 use TestCase;

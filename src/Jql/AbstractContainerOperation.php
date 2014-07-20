@@ -4,7 +4,7 @@ namespace Jql;
 
 use stdClass;
 
-class AbstractContainerOperation extends AbstractOperation
+abstract class AbstractContainerOperation extends AbstractOperation
 {
     /**
      * @var \Jql\Operation
@@ -27,13 +27,8 @@ class AbstractContainerOperation extends AbstractOperation
         $object->values = $this->values->toJson();
     }
 
-    public function run(Environment $environment)
-    {
-        return $this->values->run($environment) === $this->rhs->run($environment);
-    }
-
     /**
-     * @return OperationContainer
+     * @return Operation[]
      */
     public function values()
     {
