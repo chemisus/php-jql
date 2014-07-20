@@ -1,21 +1,21 @@
 <?php
 
-namespace Sql;
+namespace Jql;
 
-use Sql\Methods\AddMethod;
-use Sql\Operations\AndOperation;
-use Sql\Operations\ConstantOperation;
-use Sql\Operations\EqualOperation;
-use Sql\Operations\FalseOperation;
-use Sql\Operations\FilterOperation;
-use Sql\Operations\MapOperation;
-use Sql\Operations\NotOperation;
-use Sql\Operations\ObjectOperation;
-use Sql\Operations\OrOperation;
-use Sql\Operations\ReduceOperation;
-use Sql\Operations\SelectOperation;
-use Sql\Operations\TableOperation;
-use Sql\Operations\TrueOperation;
+use Jql\Methods\AddMethod;
+use Jql\Operations\AndOperation;
+use Jql\Operations\ConstantOperation;
+use Jql\Operations\EqualOperation;
+use Jql\Operations\FalseOperation;
+use Jql\Operations\FilterOperation;
+use Jql\Operations\MapOperation;
+use Jql\Operations\NotOperation;
+use Jql\Operations\ObjectOperation;
+use Jql\Operations\OrOperation;
+use Jql\Operations\ReduceOperation;
+use Jql\Operations\SelectOperation;
+use Jql\Operations\TableOperation;
+use Jql\Operations\TrueOperation;
 
 class Query
 {

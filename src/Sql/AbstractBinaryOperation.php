@@ -1,18 +1,18 @@
 <?php
 
-namespace Jql;
+namespace Sql;
 
 use stdClass;
 
 abstract class AbstractBinaryOperation extends AbstractOperation
 {
     /**
-     * @var \Jql\Operation
+     * @var \Sql\Operation
      */
     private $a;
 
     /**
-     * @var \Jql\Operation
+     * @var \Sql\Operation
      */
     private $b;
 

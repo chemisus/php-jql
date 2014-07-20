@@ -2,6 +2,8 @@
 
 namespace Sql;
 
+use PDO;
+
 class Connection
 {
     private $pdo;

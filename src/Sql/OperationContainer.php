@@ -1,16 +1,13 @@
 <?php
 
-namespace Jql;
+namespace Sql;
 
 use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
 
-class OperationContainer implements IteratorAggregate, Jsonable
+class OperationContainer implements IteratorAggregate
 {
-    /**
-     * @var Operation[]
-     */
     private $operations;
 
     /**

@@ -3,14 +3,14 @@
 namespace Jql\Operations;
 
 use Jql\Environment;
-use Jql\QueryBuilder;
+use Jql\Query;
 use Mockery;
 use TestCase;
 
 class QueryBuilderTest extends TestCase
 {
     /**
-     * @var QueryBuilder
+     * @var Query
      */
     private $query_builder;
 
@@ -44,7 +44,7 @@ class QueryBuilderTest extends TestCase
         parent::setUp();
 
         $this->environment = Mockery::mock('Jql\Environment');
-        $this->query_builder = new QueryBuilder();
+        $this->query_builder = new Query();
         $this->a = Mockery::mock('Jql\Operation');
         $this->b = Mockery::mock('Jql\Operation');
         $this->c = Mockery::mock('Jql\Operation');
@@ -70,8 +70,8 @@ class QueryBuilderTest extends TestCase
         $operation = $this->query_builder->equal($this->a, $this->b);
 
         $this->assertInstanceOf('Jql\Operations\EqualOperation', $operation);
-        $this->assertEquals($this->a, $operation->lhs());
-        $this->assertEquals($this->b, $operation->rhs());
+        $this->assertEquals($this->a, $operation->a());
+        $this->assertEquals($this->b, $operation->b());
     }
 
     public function testNot()

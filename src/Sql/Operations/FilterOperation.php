@@ -1,12 +1,12 @@
 <?php
 
-namespace Jql\Operations;
+namespace Sql\Operations;
 
-use Jql\AbstractBinaryOperation;
-use Jql\Environment;
-use Jql\Operation;
+use Sql\AbstractBinaryOperation;
+use Sql\Environment;
+use Sql\Operation;
 
-class MapOperation extends AbstractBinaryOperation
+class FilterOperation extends AbstractBinaryOperation
 {
     public function __construct(Operation $records, Operation $callback)
     {
@@ -20,7 +20,9 @@ class MapOperation extends AbstractBinaryOperation
         foreach ($this->a()->run($environment) as $key => $value) {
             $environment->push($key, $value);
 
-            $array[] = $this->b()->run($environment);
+            if ($this->b()->run($environment)) {
+                $array[] = $value;
+            }
 
             $environment->pop();
         }

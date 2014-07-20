@@ -3,112 +3,72 @@
 namespace Jql;
 
 use Jql\Operations\AndOperation;
-use Jql\Operations\ConstantOperation;
-use Jql\Operations\EqualOperation;
-use Jql\Operations\FalseOperation;
-use Jql\Operations\MapOperation;
-use Jql\Operations\NotOperation;
-use Jql\Operations\ObjectOperation;
 use Jql\Operations\OrOperation;
-use Jql\Operations\SelectOperation;
-use Jql\Operations\TrueOperation;
 
 class QueryBuilder
 {
-    /**
-     * @return TrueOperation
-     */
-    public function true()
+    private $environment;
+    private $from;
+    private $container;
+    private $query;
+    private $where;
+
+    public function __construct(Environment $environment, Query $query)
     {
-        return new TrueOperation();
+        $this->environment = $environment;
+        $this->query = $query;
+        $this->container = new OperationContainer(array());
+        $this->where = new AndOperation($this->container);
     }
 
     /**
-     * @return FalseOperation
+     * @param $name
+     * @return $this
      */
-    public function false()
+    public function table($name)
     {
-        return new FalseOperation();
+        $this->from = $this->query->table($name);
+
+        return $this;
     }
 
     /**
-     * @param Operation $lhs
-     * @param Operation $rhs
-     * @return EqualOperation
+     * @param $a
+     * @param $b
+     * @return $this
      */
-    public function equal(Operation $lhs, Operation $rhs)
+    public function eq($a, $b)
     {
-        return new EqualOperation($lhs, $rhs);
+        $this->container->add($this->query->equal(
+            $this->query->select($this->query->constant($a)),
+            $this->query->constant($b)
+        ));
+
+        return $this;
+    }
+
+    public function orWhere(callable $callback)
+    {
+        $builder = new QueryBuilder($this->environment, $this->query);
+
+        call_user_func($callback, $builder);
+
+        return $this;
+    }
+
+    public function where()
+    {
+        return $this->where;
     }
 
     /**
-     * @param Operation $value
-     * @return NotOperation
+     * @return $this
      */
-    public function not(Operation $value)
+    public function exec()
     {
-        return new NotOperation($value);
+        return $this->query->filter(
+            $this->from,
+            $this->where
+        )->run($this->environment);
     }
-
-    /**
-     * @param mixed $value
-     * @return ConstantOperation
-     */
-    public function constant($value)
-    {
-        return new ConstantOperation($value);
-    }
-
-    /**
-     * @param OperationContainer $values
-     * @return AndOperation
-     */
-    public function ands(OperationContainer $values)
-    {
-        return new AndOperation($values);
-    }
-
-    /**
-     * @param OperationContainer $values
-     * @return OrOperation
-     */
-    public function ors(OperationContainer $values)
-    {
-        return new OrOperation($values);
-    }
-
-    /**
-     * @param Operation $lhs
-     * @param Operation $rhs
-     * @return MapOperation
-     */
-    public function map(Operation $lhs, Operation $rhs)
-    {
-        return new MapOperation($lhs, $rhs);
-    }
-
-    /**
-     * @param OperationContainer $values
-     * @return ObjectOperation
-     */
-    public function object(OperationContainer $values)
-    {
-        return new ObjectOperation($values);
-    }
-
-    /**
-     * @param Operation $value
-     * @return SelectOperation
-     */
-    public function select(Operation $value)
-    {
-        return new SelectOperation($value);
-    }
-
-//    public function run($operation, $parameters = array(), Database $database = null)
-//    {
-//        $environment = new Environment($this->operations, $parameters, $database);
-//
-//        return $environment->run($operation);
-//    }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Jql\Operations;
+namespace Sql\Operations;
 
-use Jql\AbstractBinaryOperation;
-use Jql\Environment;
-use Jql\Operation;
+use Sql\AbstractBinaryOperation;
+use Sql\Environment;
+use Sql\Operation;
 
 class MapOperation extends AbstractBinaryOperation
 {
