@@ -20,12 +20,36 @@ class QueryBuilderTest extends TestCase
      */
     private $environment;
 
+    /**
+     * @var Mockery\MockInterface
+     */
+    private $a;
+
+    /**
+     * @var Mockery\MockInterface
+     */
+    private $b;
+
+    /**
+     * @var Mockery\MockInterface
+     */
+    private $c;
+
+    /**
+     * @var Mockery\MockInterface
+     */
+    private $container;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->environment = Mockery::mock('Jql\Environment');
         $this->query_builder = new QueryBuilder();
+        $this->a = Mockery::mock('Jql\Operation');
+        $this->b = Mockery::mock('Jql\Operation');
+        $this->c = Mockery::mock('Jql\Operation');
+        $this->container = Mockery::mock('Jql\OperationContainer');
     }
 
     public function testTrue()
@@ -44,43 +68,34 @@ class QueryBuilderTest extends TestCase
 
     public function testEqual()
     {
-        $lhs = Mockery::mock('Jql\Operation');
-        $rhs = Mockery::mock('Jql\Operation');
-
-        $operation = $this->query_builder->equal($lhs, $rhs);
+        $operation = $this->query_builder->equal($this->a, $this->b);
 
         $this->assertInstanceOf('Jql\Operations\EqualOperation', $operation);
-        $this->assertEquals($lhs, $operation->lhs());
-        $this->assertEquals($rhs, $operation->rhs());
+        $this->assertEquals($this->a, $operation->lhs());
+        $this->assertEquals($this->b, $operation->rhs());
     }
 
     public function testNot()
     {
-        $value = Mockery::mock('Jql\Operation');
-
-        $operation = $this->query_builder->not($value);
+        $operation = $this->query_builder->not($this->a);
 
         $this->assertInstanceOf('Jql\Operations\NotOperation', $operation);
-        $this->assertEquals($value, $operation->value());
+        $this->assertEquals($this->a, $operation->value());
     }
 
     public function testAnds()
     {
-        $values = Mockery::mock('Jql\OperationContainer');
-
-        $operation = $this->query_builder->ands($values);
+        $operation = $this->query_builder->ands($this->container);
 
         $this->assertInstanceOf('Jql\Operations\AndOperation', $operation);
-        $this->assertEquals($values, $operation->values());
+        $this->assertEquals($this->container, $operation->values());
     }
 
     public function testOrs()
     {
-        $values = Mockery::mock('Jql\OperationContainer');
-
-        $operation = $this->query_builder->ors($values);
+        $operation = $this->query_builder->ors($this->container);
 
         $this->assertInstanceOf('Jql\Operations\OrOperation', $operation);
-        $this->assertEquals($values, $operation->values());
+        $this->assertEquals($this->container, $operation->values());
     }
 }
