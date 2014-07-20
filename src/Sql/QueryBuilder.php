@@ -1,5 +1,7 @@
 <?php
 
+namespace Sql;
+
 interface QueryFactory
 {
     public function select();

@@ -1,7 +1,8 @@
 {
     "name": "chemisus/php-orm-test",
     "require": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "mockery/mockery": "*"
     },
     "autoload": {
         "classmap": [

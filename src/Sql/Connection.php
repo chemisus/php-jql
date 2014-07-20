@@ -1,5 +1,7 @@
 <?php
 
+namespace Sql;
+
 class Connection
 {
     private $pdo;

@@ -2,24 +2,72 @@
 
 namespace Jql;
 
+use Jql\Operations\AndOperation;
+use Jql\Operations\EqualOperation;
+use Jql\Operations\FalseOperation;
+use Jql\Operations\NotOperation;
+use Jql\Operations\OrOperation;
+use Jql\Operations\TrueOperation;
+
 class QueryBuilder
 {
-    private $operations;
-
-    public function __construct(OperationContainer $operations)
+    /**
+     * @return TrueOperation
+     */
+    public function true()
     {
-        $this->operations = $operations;
+        return new TrueOperation();
     }
 
-    public function run($operation, $parameters = array(), Database $database = null)
+    /**
+     * @return FalseOperation
+     */
+    public function false()
     {
-        $environment = new Environment($this->operations, $parameters, $database);
-
-        return $environment->run($operation);
+        return new FalseOperation();
     }
 
-    public function __call($method, array $values)
+    /**
+     * @param Operation $lhs
+     * @param Operation $rhs
+     * @return EqualOperation
+     */
+    public function equal(Operation $lhs, Operation $rhs)
     {
-        return call_user_func_array(array($this->operations[$method], 'make'), $values);
+        return new EqualOperation($lhs, $rhs);
     }
+
+    /**
+     * @param Operation $value
+     * @return NotOperation
+     */
+    public function not(Operation $value)
+    {
+        return new NotOperation($value);
+    }
+
+    /**
+     * @param OperationContainer $values
+     * @return AndOperation
+     */
+    public function ands(OperationContainer $values)
+    {
+        return new AndOperation($values);
+    }
+
+    /**
+     * @param OperationContainer $values
+     * @return OrOperation
+     */
+    public function ors(OperationContainer $values)
+    {
+        return new OrOperation($values);
+    }
+
+//    public function run($operation, $parameters = array(), Database $database = null)
+//    {
+//        $environment = new Environment($this->operations, $parameters, $database);
+//
+//        return $environment->run($operation);
+//    }
 }

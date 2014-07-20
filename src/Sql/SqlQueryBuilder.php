@@ -1,5 +1,7 @@
 <?php
 
+namespace Sql;
+
 class SqlQueryBuilder implements ArrayAccess, IteratorAggregate, Query
 {
     private $connection;

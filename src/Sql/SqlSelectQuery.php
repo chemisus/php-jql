@@ -1,5 +1,7 @@
 <?php
 
+namespace Sql;
+
 class SqlSelectQuery implements Term
 {
     public function evaluate()

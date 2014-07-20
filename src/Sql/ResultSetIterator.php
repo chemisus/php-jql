@@ -1,5 +1,7 @@
 <?php
 
+namespace Sql;
+
 class ResultSetIterator implements Iterator
 {
     public function current()

@@ -1,5 +1,7 @@
 <?php
 
+namespace Sql;
+
 class Statement
 {
     private $statement;

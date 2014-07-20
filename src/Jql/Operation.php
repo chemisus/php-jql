@@ -2,7 +2,16 @@
 
 namespace Jql;
 
-interface Operation
+interface Operation extends Jsonable
 {
-    public function run(Environment $environment, \stdClass $operation);
+    /**
+     * @return string
+     */
+    public function op();
+
+    /**
+     * @param Environment $environment
+     * @return mixed
+     */
+    public function run(Environment $environment);
 }
