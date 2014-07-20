@@ -10,7 +10,7 @@ use TestCase;
 class ConstOperationTest extends TestCase
 {
     /**
-     * @var ConstOperation
+     * @var ConstantOperation
      */
     private $operation;
 
@@ -30,7 +30,7 @@ class ConstOperationTest extends TestCase
 
         $this->environment = Mockery::mock('Jql\Environment');
         $this->value = Mockery::mock();
-        $this->operation = new ConstOperation($this->value);
+        $this->operation = new ConstantOperation($this->value);
     }
 
     public function testFillJsonObject()

@@ -83,6 +83,14 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals($this->a, $operation->value());
     }
 
+    public function testConstant()
+    {
+        $operation = $this->query_builder->constant($this->a);
+
+        $this->assertInstanceOf('Jql\Operations\ConstantOperation', $operation);
+        $this->assertEquals($this->a, $operation->value());
+    }
+
     public function testAnds()
     {
         $operation = $this->query_builder->ands($this->container);

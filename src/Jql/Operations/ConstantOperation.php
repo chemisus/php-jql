@@ -7,7 +7,7 @@ use Jql\Environment;
 use Jql\Operation;
 use stdClass;
 
-class ConstOperation extends AbstractOperation
+class ConstantOperation extends AbstractOperation
 {
     private $value;
 

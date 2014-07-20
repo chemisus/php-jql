@@ -3,6 +3,7 @@
 namespace Jql;
 
 use Jql\Operations\AndOperation;
+use Jql\Operations\ConstantOperation;
 use Jql\Operations\EqualOperation;
 use Jql\Operations\FalseOperation;
 use Jql\Operations\NotOperation;
@@ -44,6 +45,15 @@ class QueryBuilder
     public function not(Operation $value)
     {
         return new NotOperation($value);
+    }
+
+    /**
+     * @param mixed $value
+     * @return ConstantOperation
+     */
+    public function constant($value)
+    {
+        return new ConstantOperation($value);
     }
 
     /**
