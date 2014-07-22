@@ -18,12 +18,6 @@ class AndOperation extends AbstractContainerOperation
 
     public function run(Environment $environment)
     {
-        foreach ($this->values() as $value) {
-            if (!$value->run($environment)) {
-                return false;
-            }
-        }
-
-        return true;
+        return implode(' && ' , $this->values()->run($environment));
     }
 }

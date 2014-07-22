@@ -2,19 +2,44 @@
 
 namespace Sql\Operations;
 
-use Sql\AbstractValueOperation;
+use Sql\AbstractOperation;
 use Sql\Environment;
 use Sql\Operation;
+use Sql\OperationContainer;
 
-class SelectOperation extends AbstractValueOperation
+class SelectOperation extends AbstractOperation
 {
-    public function __construct(Operation $value)
+    private $fields;
+    private $from;
+    private $joins;
+    private $where;
+
+    /**
+     * @param OperationContainer $fields
+     * @param Operation $from
+     * @param OperationContainer $joins
+     * @param OrOperation $where
+     */
+    public function __construct(OperationContainer $fields, Operation $from, OperationContainer $joins, OrOperation $where)
     {
-        parent::__construct('select', $value);
+        parent::__construct('select');
+
+        $this->fields = $fields;
+        $this->from = $from;
+        $this->joins = $joins;
+        $this->where = $where;
     }
 
-    public function run(Environment $environment)
+    public function run(Environment $env)
     {
-        return $environment->get($environment->current(), $this->value()->run($environment));
+        $string = '';
+
+        $string .= "select ";
+        $string .= implode(',', $this->fields->run($env));
+        $string .= " from " . $this->from->run($env);
+        $string .= implode('', $this->joins->run($env));
+        $string .= " where " . $this->where->run($env);
+
+        return $string;
     }
 }

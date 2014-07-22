@@ -12,6 +12,7 @@ use Sql\Operations\MapOperation;
 use Sql\Operations\NotOperation;
 use Sql\Operations\ObjectOperation;
 use Sql\Operations\OrOperation;
+use Sql\Operations\ParamOperation;
 use Sql\Operations\ReduceOperation;
 use Sql\Operations\SelectOperation;
 use Sql\Operations\TableOperation;
@@ -19,6 +20,15 @@ use Sql\Operations\TrueOperation;
 
 class Query
 {
+    /**
+     * @param $value
+     * @return EntityOperation
+     */
+    public function entity($value)
+    {
+        return new EntityOperation($value);
+    }
+
     /**
      * @return TrueOperation
      */
@@ -122,17 +132,29 @@ class Query
     }
 
     /**
-     * @param Operation $value
+     * @param OperationContainer $fields
+     * @param Operation $from
+     * @param OperationContainer $joins
+     * @param Operations\OrOperation $where
      * @return SelectOperation
      */
-    public function select(Operation $value)
+    public function select(OperationContainer $fields, Operation $from, OperationContainer $joins, OrOperation $where)
     {
-        return new SelectOperation($value);
+        return new SelectOperation($fields, $from, $joins, $where);
     }
 
     public function table($name)
     {
         return new TableOperation($name);
+    }
+
+    /**
+     * @param $key
+     * @return ParamOperation
+     */
+    public function param($key)
+    {
+        return new ParamOperation($key);
     }
 
     /**

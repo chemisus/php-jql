@@ -18,12 +18,6 @@ class OrOperation extends AbstractContainerOperation
 
     public function run(Environment $environment)
     {
-        foreach ($this->values() as $value) {
-            if ($value->run($environment)) {
-                return true;
-            }
-        }
-
-        return false;
+        return '(' . implode(')||(' , $this->values()->run($environment)) . ')';
     }
 }

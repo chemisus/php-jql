@@ -18,6 +18,6 @@ class NotOperation extends AbstractValueOperation
 
     public function run(Environment $environment)
     {
-        return "!(" . $this->value()->run($environment) . ")";
+        return "not (" . $this->value()->run($environment) . ")";
     }
 }

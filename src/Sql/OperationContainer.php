@@ -6,16 +6,16 @@ use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
 
-class OperationContainer implements IteratorAggregate
+class OperationContainer implements IteratorAggregate, Operation
 {
-    private $operations;
+    private $operations = array();
 
     /**
      * @param Operation[] $operations
      */
-    public function __construct($operations)
+    public function __construct(array $operations)
     {
-        foreach($operations as $operation) {
+        foreach ($operations as $operation) {
             $this->add($operation);
         }
     }
@@ -49,5 +49,16 @@ class OperationContainer implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->operations);
+    }
+
+    public function run(Environment $environment)
+    {
+        $array = array();
+
+        foreach ($this->operations as $value) {
+            $array[] = $value->run($environment);
+        }
+
+        return $array;
     }
 }
