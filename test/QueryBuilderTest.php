@@ -212,9 +212,9 @@ class QueryBuilderTest extends TestCase
     {
         $sql = 'select * from "users"';
         $jql = array(
-            array('users.id' => 1, 'users.name' => 'terrence'),
-            array('users.id' => 2, 'users.name' => 'jessica'),
-            array('users.id' => 3, 'users.name' => 'mike'),
+            array('id' => 1, 'name' => 'terrence'),
+            array('id' => 2, 'name' => 'jessica'),
+            array('id' => 3, 'name' => 'mike'),
         );
 
         $query = $q->select(
@@ -236,27 +236,39 @@ class QueryBuilderTest extends TestCase
     {
         $this->markTestSkipped('something weird happens with likes. maybe a foreign key thing?');
 
-        $sql = 'select * from "users", "likes"';
+        $sql = 'select' .
+            ' "users"."id",' .
+            ' "users"."name",' .
+            ' ("likes"."id") as "like_id",' .
+            ' "likes"."user_id",' .
+            ' "likes"."book_id"' .
+            ' from "users", "likes"';
         $jql = array(
-            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 2, 'name' => "jessica", 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 3, 'name' => "mike", 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 1, 'name' => "terrence", 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
         );
 
         $query = $q->select(
-            array($q->entity('*')),
+            array(
+                $q->entity('users.id'),
+                $q->entity('users.name'),
+                $q->alias($q->entity('likes.id'), 'like_id'),
+                $q->entity('likes.user_id'),
+                $q->entity('likes.book_id'),
+            ),
             array($q->table('users'), $q->table('likes'))
         );
 
@@ -272,57 +284,75 @@ class QueryBuilderTest extends TestCase
      */
     public function testSelectFromUsersLikesBooks(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $sql = 'select * from "users", "books", "likes"';
+        $sql = 'select' .
+            ' "users"."id",' .
+            ' "users"."name",' .
+            ' ("books"."id") as "book",' .
+            ' "books"."title",' .
+            ' "books"."author_id",' .
+            ' ("likes"."id") as "like_id",' .
+            ' "likes"."user_id",' .
+            ' "likes"."book_id"' .
+            ' from "users", "books", "likes"';
         $jql = array(
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 2, 'users.name' => "jessica", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 2, 'books.title' => "Java", 'books.author_id' => 1, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
-            array('users.id' => 3, 'users.name' => "mike", 'books.id' => 3, 'books.title' => "PHP", 'books.author_id' => 2, 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 1, 'name' => "terrence", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 1, 'name' => "terrence", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 1, 'name' => "terrence", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 1, 'name' => "terrence", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 1, 'name' => "terrence", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 2, 'name' => "jessica", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 2, 'name' => "jessica", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 2, 'name' => "jessica", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 2, 'name' => "jessica", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 2, 'name' => "jessica", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 3, 'name' => "mike", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 3, 'name' => "mike", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'book' => 2, 'title' => "Java", 'author_id' => 1, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
+            array('id' => 3, 'name' => "mike", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 3, 'user_id' => 2, 'book_id' => 1),
+            array('id' => 3, 'name' => "mike", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 4, 'user_id' => 2, 'book_id' => 2),
+            array('id' => 3, 'name' => "mike", 'book' => 3, 'title' => "PHP", 'author_id' => 2, 'like_id' => 5, 'user_id' => 3, 'book_id' => 2),
         );
 
         $query = $q->select(
-            array($q->entity('*')),
+            array(
+                $q->entity('users.id'),
+                $q->entity('users.name'),
+                $q->alias($q->entity('books.id'), 'book'),
+                $q->entity('books.title'),
+                $q->entity('books.author_id'),
+                $q->alias($q->entity('likes.id'), 'like_id'),
+                $q->entity('likes.user_id'),
+                $q->entity('likes.book_id'),
+            ),
             array($q->table('users'), $q->table('books'), $q->table('likes'))
         );
 
@@ -340,9 +370,9 @@ class QueryBuilderTest extends TestCase
     {
         $sql = 'select * from "users"';
         $jql = array(
-            array('users.id' => 1, 'users.name' => 'terrence'),
-            array('users.id' => 2, 'users.name' => 'jessica'),
-            array('users.id' => 3, 'users.name' => 'mike'),
+            array('id' => 1, 'name' => 'terrence'),
+            array('id' => 2, 'name' => 'jessica'),
+            array('id' => 3, 'name' => 'mike'),
         );
 
         $query = $q->select(
@@ -364,9 +394,9 @@ class QueryBuilderTest extends TestCase
     {
         $sql = 'select "users"."id" from "users"';
         $jql = array(
-            array('users.id' => 1),
-            array('users.id' => 2),
-            array('users.id' => 3),
+            array('id' => 1),
+            array('id' => 2),
+            array('id' => 3),
         );
 
         $query = $q->select(
@@ -388,7 +418,7 @@ class QueryBuilderTest extends TestCase
     {
         $sql = 'select * from "users" where "users"."id"=?';
         $jql = array(
-            array('users.id' => 1, 'users.name' => 'terrence'),
+            array('id' => 1, 'name' => 'terrence'),
         );
 
         $query = $q->select(

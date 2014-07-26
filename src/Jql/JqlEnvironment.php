@@ -52,19 +52,6 @@ class JqlEnvironment extends AbstractEnvironment
 
     public function execute($query)
     {
-        $rows = $this->run($query);
-        $results = array();
-
-        foreach ($rows as $row) {
-            $result = array();
-            foreach ($row as $key => $value) {
-                $k = explode('.', $key);
-                $k = array_pop($k);
-                $result[$k] = $value;
-            }
-            $results[] = $result;
-        }
-
-        return $results;
+        return $this->run($query);
     }
 }

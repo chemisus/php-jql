@@ -47,6 +47,21 @@ class JqlSelectOperation extends AbstractTerm
         $rows = $this->order($env, $term, $rows);
         $rows = $this->skip($env, $term, $rows);
         $rows = $this->limit($env, $term, $rows);
+
+        $results = array();
+
+        foreach ($rows as $row) {
+            $result = array();
+            foreach ($row as $key => $value) {
+                $k = explode('.', $key);
+                $k = array_pop($k);
+                $result[$k] = $value;
+            }
+            $results[] = $result;
+        }
+
+        return $results;
+
         return $rows;
     }
 
