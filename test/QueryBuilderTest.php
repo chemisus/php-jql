@@ -239,7 +239,7 @@ class QueryBuilderTest extends TestCase
         $sql = 'select' .
             ' "users"."id",' .
             ' "users"."name",' .
-            ' ("likes"."id") as "like_id",' .
+            ' "likes"."id" as "like_id",' .
             ' "likes"."user_id",' .
             ' "likes"."book_id"' .
             ' from "users", "likes"';
@@ -287,10 +287,10 @@ class QueryBuilderTest extends TestCase
         $sql = 'select' .
             ' "users"."id",' .
             ' "users"."name",' .
-            ' ("books"."id") as "book",' .
+            ' "books"."id" as "book",' .
             ' "books"."title",' .
             ' "books"."author_id",' .
-            ' ("likes"."id") as "like_id",' .
+            ' "likes"."id" as "like_id",' .
             ' "likes"."user_id",' .
             ' "likes"."book_id"' .
             ' from "users", "books", "likes"';
@@ -519,7 +519,7 @@ class QueryBuilderTest extends TestCase
      */
     public function testAlias(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $sql = 'select ("users"."id") as "id_alias" from "users" where ("users"."id"=?) or ("users"."id"=?) limit ? offset ?';
+        $sql = 'select "users"."id" as "id_alias" from "users" where ("users"."id"=?) or ("users"."id"=?) limit ? offset ?';
         $jql = array(
             array('id_alias' => 2),
         );
@@ -686,5 +686,83 @@ class QueryBuilderTest extends TestCase
 
         $this->assertEquals($jql, $jql_env->run($query));
         $this->assertEquals($sql, $sql_env->run($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testLeftJoin(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $this->markTestIncomplete();
+
+        $sql = 'select "users"."id", "users"."name", "books"."title" from "users" left join "books" as "books" on "books"."author_id"="users"."id"';
+        $jql = array(
+            array('id' => 1, 'name' => "terrence", 'title' => "C++"),
+            array('id' => 1, 'name' => "terrence", 'title' => "Java"),
+            array('id' => 2, 'name' => "jessica", 'title' => "PHP"),
+            array('id' => 3, 'name' => "mike", 'title' => ""),
+
+        );
+
+        $query = $q->select(
+            array(
+                $q->entity('users.id'),
+                $q->entity('users.name'),
+                $q->entity('books.title'),
+            ),
+            array($q->table('users')),
+            array(
+                $x = $q->leftJoin(
+                    $q->alias($q->table('books'), 'books'),
+                    $q->eq(
+                        $q->field('books.author_id'),
+                        $q->field('users.id')
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testRightJoin(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select "users"."id", "users"."name", "books"."title" from "users" right join "books" as "books" on "books"."author_id"="users"."id"';
+        $jql = array(
+            array('id' => 1, 'name' => "terrence", 'title' => "C++"),
+            array('id' => 1, 'name' => "terrence", 'title' => "Java"),
+            array('id' => 2, 'name' => "jessica", 'title' => "PHP"),
+        );
+
+        $query = $q->select(
+            array(
+                $q->entity('users.id'),
+                $q->entity('users.name'),
+                $q->entity('books.title'),
+            ),
+            array($q->table('users')),
+            array(
+                $x = $q->rightJoin(
+                    $q->alias($q->table('books'), 'books'),
+                    $q->eq(
+                        $q->field('books.author_id'),
+                        $q->field('users.id')
+                    )
+                )
+            )
+        );
+
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 }

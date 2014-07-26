@@ -33,6 +33,8 @@ class SqlEnvironment extends AbstractEnvironment
             new SqlGreaterThanOperation(),
             new SqlLesserThanOperation(),
             new SqlSubqueryOperation(),
+            new SqlLeftJoinOperation(),
+            new SqlRightJoinOperation(),
         ));
 
         $this->pdo = $pdo;

@@ -24,6 +24,6 @@ class SqlAliasOperation extends AbstractBinaryOperation
 
     public function operate($a, $b)
     {
-        return "({$a}) as \"{$b}\"";
+        return "{$a} as \"{$b}\"";
     }
 }

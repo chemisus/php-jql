@@ -141,4 +141,22 @@ class QueryBuilder
             ->set('b', $b)
             ->build();
     }
+
+    public function leftJoin($a, $b)
+    {
+        return $this->term_builder
+            ->make('lj')
+            ->set('a', $a)
+            ->set('b', $b)
+            ->build();
+    }
+
+    public function rightJoin($a, $b)
+    {
+        return $this->term_builder
+            ->make('rj')
+            ->set('a', $a)
+            ->set('b', $b)
+            ->build();
+    }
 }

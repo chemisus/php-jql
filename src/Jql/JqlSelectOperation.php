@@ -78,9 +78,28 @@ class JqlSelectOperation extends AbstractTerm
         return $results;
     }
 
-    public function join(Environment $env, $term, array $rows = array())
+    public function join(Environment $env, $terms, array $rows = array())
     {
-        return $rows;
+        $key = 'j';
+
+        if (!$env->has($terms, $key)) {
+            return $rows;
+        }
+
+        $results = array();
+
+        foreach ($rows as $row) {
+            $env->push($row);
+            foreach ($env->get($terms, $key) as $term) {
+                foreach ($env->run($term) as $result) {
+                    $results[] = $result;
+                }
+
+            }
+            $env->pop();
+        }
+
+        return $results;
     }
 
     public function where(Environment $env, $term, array $rows = array())
