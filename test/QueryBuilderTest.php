@@ -633,4 +633,32 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals($jql, $jql_env->execute($query));
         $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
+
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectField(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select "id", "name" from "users"';
+        $jql = array(
+            array('id' => 1, 'name' => 'terrence'),
+            array('id' => 2, 'name' => 'jessica'),
+            array('id' => 3, 'name' => 'mike'),
+        );
+
+        $query = $q->select(
+            array(
+                $q->entity('id'),
+                $q->entity('name')
+            ),
+            array($q->table('users'))
+        );
+
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+    }
 }
