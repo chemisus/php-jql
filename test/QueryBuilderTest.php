@@ -641,7 +641,7 @@ class QueryBuilderTest extends TestCase
      * @param QueryBuilder $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectField(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    public function testSelectEntity(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
         $sql = 'select "id", "name" from "users"';
         $jql = array(
@@ -656,6 +656,33 @@ class QueryBuilderTest extends TestCase
                 $q->entity('name')
             ),
             array($q->table('users'))
+        );
+
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectField(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select "id", "name" from "users" where "id"=?';
+        $jql = array(
+            array('id' => 2, 'name' => 'jessica'),
+        );
+
+        $query = $q->select(
+            array(
+                $q->entity('id'),
+                $q->entity('name')
+            ),
+            array($q->table('users')),
+            null,
+            $q->eq($q->field('id'), $q->param(2))
         );
 
         $this->assertEquals($jql, $jql_env->run($query));

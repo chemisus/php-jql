@@ -22,6 +22,12 @@ class JqlFieldOperation extends AbstractSoftValueTerm
             return $current[$keys[0]][$keys[1]];
         }
 
+        if (count($keys) === 1) {
+            $current = array_reduce($current, 'array_merge', array());
+
+            return $current[$keys[0]];
+        }
+
         throw new \Exception('not yet implemented.');
     }
 }
