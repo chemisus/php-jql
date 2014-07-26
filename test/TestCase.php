@@ -8,4 +8,9 @@ class TestCase extends PHPUnit_Framework_TestCase
 
         Mockery::close();
     }
+
+    public function mock($name)
+    {
+        return Mockery::mock($name);
+    }
 }
