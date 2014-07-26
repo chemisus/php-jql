@@ -30,11 +30,11 @@ abstract class AbstractTerm implements Term
 
     public function verifyKey(Environment $env, $term, $key, $required = true)
     {
-        if ($required && !$env->has($term, $key)) {
-            return false;
+        if ($env->has($term, $key)) {
+            return $env->verify($env->get($term, $key));
         }
 
-        return $env->verify($env->get($term, $key));
+        return !$required;
     }
 
     /**

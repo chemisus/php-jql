@@ -634,7 +634,6 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
-
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env

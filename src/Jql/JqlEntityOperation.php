@@ -32,6 +32,6 @@ class JqlEntityOperation extends AbstractSoftValueTerm
             return array($keys[0] => $current[$keys[0]]);
         }
 
-        throw new \Exception('not yet implemented.');
+        throw new \Exception('Invalid entity name.');
     }
 }

@@ -28,6 +28,6 @@ class JqlFieldOperation extends AbstractSoftValueTerm
             return $current[$keys[0]];
         }
 
-        throw new \Exception('not yet implemented.');
+        throw new \Exception('Invalid field name.');
     }
 }
