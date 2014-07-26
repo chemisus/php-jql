@@ -9,19 +9,12 @@ interface TermBuilder
     public function make($name);
 
     /**
-     * @param $value
      * @param $key
-     * @return mixed
-     */
-    public function get($value, $key);
-
-    /**
-     * @param $key
-     * @param $value
+     * @param $term
      * @param bool $nulls
      * @return TermBuilder
      */
-    public function set($key, $value, $nulls=true);
+    public function set($key, $term, $nulls = true);
 
     /**
      * @return mixed

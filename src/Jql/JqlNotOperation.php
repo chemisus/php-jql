@@ -11,8 +11,8 @@ class JqlNotOperation extends AbstractUnaryOperation
         parent::__construct('not');
     }
 
-    public function operate($value)
+    public function operate($term)
     {
-        return !$value;
+        return !$term;
     }
 }

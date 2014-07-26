@@ -2,8 +2,8 @@
 
 namespace Jql;
 
-use Environment;
 use AbstractSoftValueTerm;
+use Environment;
 
 class JqlParameterOperation extends AbstractSoftValueTerm
 {
@@ -12,8 +12,8 @@ class JqlParameterOperation extends AbstractSoftValueTerm
         parent::__construct('param');
     }
 
-    public function operate(Environment $env, $value)
+    public function operate(Environment $env, $term)
     {
-        return $value;
+        return $term;
     }
 }

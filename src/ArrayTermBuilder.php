@@ -1,51 +1,36 @@
 <?php
 
-class ObjectTermBuilder implements TermBuilder, TermReader
+class ArrayTermBuilder implements TermBuilder, TermReader
 {
     /**
-     * @var stdClass
+     * @var array
      */
     private $term;
 
-    /**
-     * @param string $t
-     * @return $this|TermBuilder
-     */
     public function make($t)
     {
-        $this->term = new stdClass();
-        $this->term->t = $t;
+        $this->term = array($t);
         return $this;
     }
 
-    /**
-     * @param $key
-     * @param $term
-     * @param bool $nulls
-     * @return $this|TermBuilder
-     */
     public function set($key, $term, $nulls = true)
     {
         if ($term !== null || $nulls) {
-            $this->term->{$key} = $term;
+            if (!isset($this->term[1])) {
+                $this->term[1] = new stdClass();
+            }
+
+            $this->term[1]->{$key} = $term;
         }
 
         return $this;
     }
 
-    /**
-     * @param $term
-     * @param $key
-     * @return mixed
-     */
     public function get($term, $key)
     {
-        return $term->{$key};
+        return $term[1]->{$key};
     }
 
-    /**
-     * @return stdClass
-     */
     public function build()
     {
         return $this->term;
@@ -57,7 +42,7 @@ class ObjectTermBuilder implements TermBuilder, TermReader
      */
     public function name($term)
     {
-        return $term->t;
+        return $term[0];
     }
 
     /**
@@ -67,6 +52,6 @@ class ObjectTermBuilder implements TermBuilder, TermReader
      */
     public function has($term, $key)
     {
-        return isset($term->{$key});
+        return isset($term[1]->{$key});
     }
 }

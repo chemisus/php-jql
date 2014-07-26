@@ -2,9 +2,9 @@
 
 namespace Sql;
 
-use Environment;
-use stdClass;
 use AbstractListOperation;
+use Environment;
+
 
 class SqlOrOperation extends AbstractListOperation
 {
@@ -15,15 +15,15 @@ class SqlOrOperation extends AbstractListOperation
 
     /**
      * @param Environment $env
-     * @param stdClass $value
+     * @param  $term
      * @return mixed
      */
-    public function run(Environment $env, stdClass $value)
+    public function run(Environment $env, $term)
     {
         $array = array();
 
-        foreach ($value->v as $value) {
-            $array[] = $env->run($value);
+        foreach ($env->get($term, 'v') as $term) {
+            $array[] = $env->run($term);
         }
 
         return

@@ -4,7 +4,7 @@ namespace Sql;
 
 use AbstractEnvironment;
 use PDO;
-use stdClass;
+use TermReader;
 
 class SqlEnvironment extends AbstractEnvironment
 {
@@ -15,9 +15,9 @@ class SqlEnvironment extends AbstractEnvironment
 
     private $parameters = array();
 
-    public function __construct(PDO $pdo)
+    public function __construct(TermReader $term_reader, PDO $pdo)
     {
-        parent::__construct(array(
+        parent::__construct($term_reader, array(
             new SqlTrueTerm(),
             new SqlFalseTerm(),
             new SqlEqualOperation(),
@@ -44,7 +44,7 @@ class SqlEnvironment extends AbstractEnvironment
         $this->parameters[] = $value;
     }
 
-    public function execute(stdClass $query)
+    public function execute($query)
     {
         $this->parameters = array();
 

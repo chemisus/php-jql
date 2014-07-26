@@ -2,9 +2,8 @@
 
 namespace Jql;
 
-use Environment;
-use stdClass;
 use AbstractListOperation;
+use Environment;
 
 class JqlAndOperation extends AbstractListOperation
 {
@@ -15,13 +14,13 @@ class JqlAndOperation extends AbstractListOperation
 
     /**
      * @param Environment $env
-     * @param stdClass $value
+     * @param  $term
      * @return mixed
      */
-    public function run(Environment $env, stdClass $value)
+    public function run(Environment $env, $term)
     {
-        foreach ($value->v as $value) {
-            if (!$env->run($value)) {
+        foreach ($env->get($term, 'v') as $term) {
+            if (!$env->run($term)) {
                 return false;
             }
         }

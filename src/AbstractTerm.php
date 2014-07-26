@@ -9,38 +9,38 @@ abstract class AbstractTerm implements Term
         $this->term = $term;
     }
 
-    public function term()
+    public function name()
     {
         return $this->term;
     }
 
     /**
      * @param Environment $env
-     * @param $value
+     * @param $term
      * @return boolean
      */
-    public function verify(Environment $env, stdClass $value)
+    public function verify(Environment $env, $term)
     {
-        if ($this->term() !== $env->term($value)) {
+        if ($this->name() !== $env->name($term)) {
             return false;
         }
 
-        return $this->verifyFields($env, $value);
+        return $this->verifyFields($env, $term);
     }
 
-    public function verifyKey(Environment $env, stdClass $value, $key, $required = true)
+    public function verifyKey(Environment $env, $term, $key, $required = true)
     {
-        if ($required && !isset($value->{$key})) {
+        if ($required && !$env->has($term, $key)) {
             return false;
         }
 
-        return $env->verify($value->{$key});
+        return $env->verify($env->get($term, $key));
     }
 
     /**
      * @param Environment $env
-     * @param $value
+     * @param $term
      * @return bool
      */
-    public abstract function verifyFields(Environment $env, stdClass $value);
+    public abstract function verifyFields(Environment $env, $term);
 }

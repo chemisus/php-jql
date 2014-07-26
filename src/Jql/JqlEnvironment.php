@@ -3,16 +3,16 @@
 namespace Jql;
 
 use AbstractEnvironment;
-use stdClass;
+use TermReader;
 
 class JqlEnvironment extends AbstractEnvironment
 {
     private $tables;
     private $stack = array();
 
-    public function __construct($tables)
+    public function __construct(TermReader $term_reader, $tables)
     {
-        parent::__construct(array(
+        parent::__construct($term_reader, array(
             new JqlTrueTerm(),
             new JqlFalseTerm(),
             new JqlEqualOperation(),
@@ -49,7 +49,7 @@ class JqlEnvironment extends AbstractEnvironment
         array_pop($this->stack);
     }
 
-    public function execute(stdClass $query)
+    public function execute($query)
     {
         $rows = $this->run($query);
         $results = array();

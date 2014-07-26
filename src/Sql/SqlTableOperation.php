@@ -12,8 +12,8 @@ class SqlTableOperation extends AbstractSoftValueTerm
         parent::__construct('table');
     }
 
-    public function operate(Environment $env, $value)
+    public function operate(Environment $env, $term)
     {
-        return '"' . $value . '"';
+        return '"' . $term . '"';
     }
 }

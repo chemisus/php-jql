@@ -1,12 +1,28 @@
 <?php
 
-interface Environment
+interface Environment extends TermReader
 {
-    public function term(stdClass $value);
+    /**
+     * @param $term
+     * @return Term
+     */
+    public function term($term);
 
-    public function run(stdClass $value);
+    /**
+     * @param $term
+     * @return mixed
+     */
+    public function run($term);
 
-    public function verify(stdClass $value);
+    /**
+     * @param $term
+     * @return boolean
+     */
+    public function verify($term);
 
-    public function execute(stdClass $query);
+    /**
+     * @param $query
+     * @return mixed[]
+     */
+    public function execute($query);
 }

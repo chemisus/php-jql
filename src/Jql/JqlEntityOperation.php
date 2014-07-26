@@ -12,14 +12,14 @@ class JqlEntityOperation extends AbstractSoftValueTerm
         parent::__construct('entity');
     }
 
-    public function operate(Environment $env, $value)
+    public function operate(Environment $env, $term)
     {
         $current = $env->current();
 
-        if ($value === '*') {
+        if ($term === '*') {
             return $current;
         }
 
-        return array($value => $current[$value]);
+        return array($term => $current[$term]);
     }
 }

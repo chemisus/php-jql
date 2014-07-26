@@ -2,37 +2,80 @@
 
 abstract class AbstractEnvironment implements Environment
 {
-    private $operations;
+    private $terms;
+    private $term_reader;
 
-    public function __construct($operations = array())
+    /**
+     * @param TermReader $term_reader
+     * @param Term[] $terms
+     */
+    public function __construct(TermReader $term_reader, $terms = array())
     {
-        foreach ($operations as $value) {
-            $this->operations[$value->term()] = $value;
+        $this->term_reader = $term_reader;
+
+        foreach ($terms as $term) {
+            $this->terms[$term->name()] = $term;
         }
     }
 
-    public function term(stdClass $value)
+    /**
+     * @param $term
+     * @return string
+     */
+    public function name($term)
     {
-        if (!isset($value->t)) {
-            throw new Exception('no name specified.');
-        }
-
-        return $value->t;
+        return $this->term_reader->name($term);
     }
 
-    public function verify(stdClass $value)
+    /**
+     * @param $term
+     * @return Term
+     */
+    public function term($term)
     {
-        return
-            isset($this->operations[$this->term($value)]) &&
-            $this->operations[$this->term($value)]->verify($this, $value);
+        return $this->terms[$this->name($term)];
     }
 
-    public function run(stdClass $value)
+    /**
+     * @param $term
+     * @param $key
+     * @return bool
+     */
+    public function has($term, $key)
     {
-        if (!$this->verify($value)) {
-            throw new Exception($this->term($value) . ' verification failed');
+        return $this->term_reader->has($term, $key);
+    }
+
+    /**
+     * @param $term
+     * @param $key
+     * @return mixed
+     */
+    public function get($term, $key)
+    {
+        return $this->term_reader->get($term, $key);
+    }
+
+    /**
+     * @param $term
+     * @return bool
+     */
+    public function verify($term)
+    {
+        return $this->term($term)->verify($this, $term);
+    }
+
+    /**
+     * @param $term
+     * @return mixed
+     * @throws Exception
+     */
+    public function run($term)
+    {
+        if (!$this->verify($term)) {
+            throw new Exception(' verification failed');
         }
 
-        return $this->operations[$this->term($value)]->run($this, $value);
+        return $this->term($term)->run($this, $term);
     }
 }

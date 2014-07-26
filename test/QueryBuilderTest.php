@@ -1,6 +1,6 @@
 <?php
 
-class QueryTest extends TestCase
+class QueryBuilderTest extends TestCase
 {
     /**
      * @var Environment
@@ -13,6 +13,10 @@ class QueryTest extends TestCase
     private $jql;
 
     public function setUp()
+    {
+    }
+
+    public function queryBuilderProvider()
     {
         $sdb = new PDO("pgsql:dbname=users_books;host=localhost", "homestead", "secret");
 
@@ -36,14 +40,32 @@ class QueryTest extends TestCase
             ),
         );
 
-        $this->sql = new Sql\SqlEnvironment($sdb);
-        $this->jql = new Jql\JqlEnvironment($jdb);
+        $otb = new ObjectTermBuilder();
+        $atb = new ArrayTermBuilder();
+
+        $oqb = new QueryBuilder($otb);
+        $aqb = new QueryBuilder($atb);
+
+        $sql_o = new Sql\SqlEnvironment($otb, $sdb);
+        $jql_o = new Jql\JqlEnvironment($otb, $jdb);
+
+        $sql_a = new Sql\SqlEnvironment($atb, $sdb);
+        $jql_a = new Jql\JqlEnvironment($atb, $jdb);
+
+        return array(
+            array($sql_a, $jql_a, $aqb),
+            array($sql_o, $jql_o, $oqb),
+        );
     }
 
-    public function testEqualTrue()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testEqualTrue(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'true=true';
         $jql = true;
 
@@ -52,14 +74,18 @@ class QueryTest extends TestCase
             $q->true()
         );
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testEqualFalse()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testEqualFalse(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'true=false';
         $jql = false;
 
@@ -68,40 +94,52 @@ class QueryTest extends TestCase
             $q->false()
         );
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testNotTrue()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testNotTrue(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'not true';
         $jql = false;
 
         $query = $q->not($q->true());
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testNotFalse()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testNotFalse(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'not false';
         $jql = true;
 
         $query = $q->not($q->false());
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testAndTrue()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testAndTrue(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'true and true and true';
         $jql = true;
 
@@ -111,14 +149,18 @@ class QueryTest extends TestCase
             $q->true(),
         ));
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testAndFalse()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testAndFalse(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'true and false and true';
         $jql = false;
 
@@ -128,14 +170,18 @@ class QueryTest extends TestCase
             $q->true(),
         ));
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testOrTrue()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testOrTrue(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = '(true) or (false) or (false)';
         $jql = true;
 
@@ -145,14 +191,18 @@ class QueryTest extends TestCase
             $q->false(),
         ));
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testOrFalse()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testOrFalse(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = '(false) or (false) or (false)';
         $jql = false;
 
@@ -162,14 +212,18 @@ class QueryTest extends TestCase
             $q->false(),
         ));
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
     }
 
-    public function testSelectFromUsers()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectFromUsers(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'select * from "users"';
         $jql = array(
             array('users.id' => 1, 'users.name' => 'terrence'),
@@ -182,15 +236,19 @@ class QueryTest extends TestCase
             array($q->table('users'))
         );
 
-        $this->assertEquals($jql, $this->jql->run($query));
-        $this->assertEquals($sql, $this->sql->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
     }
 
-    public function testSelectFromUsersLikes()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectFromUsersLikes(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
         $this->markTestSkipped('something weird happens with likes. maybe a foreign key thing?');
-
-        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select * from "users", "likes"';
         $jql = array(
@@ -216,14 +274,18 @@ class QueryTest extends TestCase
             array($q->table('users'), $q->table('likes'))
         );
 
-        $this->assertEquals($jql, $this->jql->run($query));
-        $this->assertEquals($sql, $this->sql->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
     }
 
-    public function testSelectFromUsersLikesBooks()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectFromUsersLikesBooks(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'select * from "users", "books", "likes"';
         $jql = array(
             array('users.id' => 1, 'users.name' => "terrence", 'books.id' => 1, 'books.title' => "C++", 'books.author_id' => 1, 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
@@ -278,14 +340,18 @@ class QueryTest extends TestCase
             array($q->table('users'), $q->table('books'), $q->table('likes'))
         );
 
-        $this->assertEquals($jql, $this->jql->run($query));
-        $this->assertEquals($sql, $this->sql->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
     }
 
-    public function testSelectAllFromUsers()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectAllFromUsers(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'select * from "users"';
         $jql = array(
             array('users.id' => 1, 'users.name' => 'terrence'),
@@ -298,14 +364,18 @@ class QueryTest extends TestCase
             array($q->table('users'))
         );
 
-        $this->assertEquals($jql, $this->jql->run($query));
-        $this->assertEquals($sql, $this->sql->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
     }
 
-    public function testSelectIdFromUsers()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectIdFromUsers(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'select "users"."id" from "users"';
         $jql = array(
             array('users.id' => 1),
@@ -318,14 +388,18 @@ class QueryTest extends TestCase
             array($q->table('users'))
         );
 
-        $this->assertEquals($jql, $this->jql->run($query));
-        $this->assertEquals($sql, $this->sql->run($query));
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
     }
 
-    public function testSelectAllFromUsersWhereIdIs1()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectAllFromUsersWhereIdIs1(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'select * from "users" where "users"."id"=?';
         $jql = array(
             array('users.id' => 1, 'users.name' => 'terrence'),
@@ -337,15 +411,19 @@ class QueryTest extends TestCase
             $q->eq($q->field("users.id"), $q->param(1))
         );
 
-        $this->assertEquals($jql, $this->jql->run($query));
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals(array(1), $this->sql->parameters());
+        $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals(array(1), $sql_env->parameters());
     }
 
-    public function testExecute()
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testExecute(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $q = new QueryBuilder(new ObjectTermBuilder());
-
         $sql = 'select * from "users" where "users"."id"=?';
 
         $query = $q->select(
@@ -356,7 +434,7 @@ class QueryTest extends TestCase
 
         print_r(json_encode($query));
 
-        $this->assertEquals($sql, $this->sql->run($query));
-        $this->assertEquals($this->sql->execute($query), $this->jql->execute($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 }

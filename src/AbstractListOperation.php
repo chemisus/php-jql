@@ -4,13 +4,13 @@ abstract class AbstractListOperation extends AbstractTerm
 {
     /**
      * @param Environment $env
-     * @param $value
+     * @param $term
      * @return bool
      */
-    public function verifyFields(Environment $env, stdClass $value)
+    public function verifyFields(Environment $env, $term)
     {
-        foreach ($value->v as $value) {
-            if (!$env->verify($value)) {
+        foreach ($env->get($term, 'v') as $term) {
+            if (!$env->verify($term)) {
                 return false;
             }
         }

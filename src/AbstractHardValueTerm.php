@@ -13,15 +13,15 @@ abstract class AbstractHardValueTerm extends AbstractTerm
 
     /**
      * @param Environment $env
-     * @param stdClass $value
+     * @param  $term
      * @return mixed
      */
-    public function run(Environment $env, stdClass $value)
+    public function run(Environment $env, $term)
     {
         return $this->value;
     }
 
-    public function verifyFields(Environment $env, stdClass $value)
+    public function verifyFields(Environment $env, $term)
     {
         return true;
     }

@@ -12,11 +12,11 @@ class SqlEntityOperation extends AbstractSoftValueTerm
         parent::__construct('entity');
     }
 
-    public function operate(Environment $env, $value)
+    public function operate(Environment $env, $term)
     {
-        $values = explode('.', $value);
-        $value = '"' . implode('"."', $values) . '"';
-        $value = str_replace('"*"', '*', $value);
-        return $value;
+        $values = explode('.', $term);
+        $term = '"' . implode('"."', $values) . '"';
+        $term = str_replace('"*"', '*', $term);
+        return $term;
     }
 }

@@ -12,10 +12,10 @@ class JqlFieldOperation extends AbstractSoftValueTerm
         parent::__construct('field');
     }
 
-    public function operate(Environment $env, $value)
+    public function operate(Environment $env, $term)
     {
         $current = $env->current();
 
-        return $current[$value];
+        return $current[$term];
     }
 }

@@ -4,7 +4,7 @@ namespace Jql;
 
 use AbstractTerm;
 use Environment;
-use stdClass;
+
 
 class JqlSelectOperation extends AbstractTerm
 {
@@ -15,39 +15,39 @@ class JqlSelectOperation extends AbstractTerm
 
     /**
      * @param Environment $env
-     * @param $value
+     * @param $term
      * @return bool
      */
-    public function verifyFields(Environment $env, stdClass $value)
+    public function verifyFields(Environment $env, $term)
     {
         return true;
-//            $this->verifyKey($env, $value, 'f', false) &&
-//            $this->verifyKey($env, $value, 'j', false) &&
-//            $this->verifyKey($env, $value, 'w', false) &&
-//            $this->verifyKey($env, $value, 'g', false) &&
-//            $this->verifyKey($env, $value, 'v') &&
-//            $this->verifyKey($env, $value, 'h', false) &&
-//            $this->verifyKey($env, $value, 'o', false) &&
-//            $this->verifyKey($env, $value, 's', false) &&
-//            $this->verifyKey($env, $value, 'l', false);
+//            $this->verifyKey($env, $term, 'f', false) &&
+//            $this->verifyKey($env, $term, 'j', false) &&
+//            $this->verifyKey($env, $term, 'w', false) &&
+//            $this->verifyKey($env, $term, 'g', false) &&
+//            $this->verifyKey($env, $term, 'v') &&
+//            $this->verifyKey($env, $term, 'h', false) &&
+//            $this->verifyKey($env, $term, 'o', false) &&
+//            $this->verifyKey($env, $term, 's', false) &&
+//            $this->verifyKey($env, $term, 'l', false);
     }
 
     /**
      * @param Environment $env
-     * @param \stdClass $value
+     * @param \ $term
      * @return mixed
      */
-    public function run(Environment $env, stdClass $value)
+    public function run(Environment $env, $term)
     {
-        $rows = $this->from($env, $value);
-        $rows = $this->join($env, $value, $rows);
-        $rows = $this->where($env, $value, $rows);
-        $rows = $this->group($env, $value, $rows);
-        $rows = $this->value($env, $value, $rows);
-        $rows = $this->having($env, $value, $rows);
-        $rows = $this->order($env, $value, $rows);
-        $rows = $this->skip($env, $value, $rows);
-        $rows = $this->limit($env, $value, $rows);
+        $rows = $this->from($env, $term);
+        $rows = $this->join($env, $term, $rows);
+        $rows = $this->where($env, $term, $rows);
+        $rows = $this->group($env, $term, $rows);
+        $rows = $this->value($env, $term, $rows);
+        $rows = $this->having($env, $term, $rows);
+        $rows = $this->order($env, $term, $rows);
+        $rows = $this->skip($env, $term, $rows);
+        $rows = $this->limit($env, $term, $rows);
         return $rows;
     }
 
@@ -62,13 +62,13 @@ class JqlSelectOperation extends AbstractTerm
         return $result;
     }
 
-    public function from(Environment $env, stdClass $ops)
+    public function from(Environment $env, $ops)
     {
         $key = 'f';
 
         $results = array();
 
-        foreach ($ops->{$key} as $op) {
+        foreach ($env->get($ops, $key) as $op) {
             foreach ($env->run($op) as $table => $rows) {
                 if (!count($results)) {
                     foreach ($rows as $id => $row) {
@@ -88,7 +88,7 @@ class JqlSelectOperation extends AbstractTerm
 
 //        $result = array_reduce(array_map(function ($op) use ($env) {
 //            return $env->run($op);
-//        }, $value->{$key}), function ($initial, $current) {
+//        }, $env->get($term, $key)), function ($initial, $current) {
 //            if ($initial === null) {
 //                return $current;
 //            }
@@ -99,23 +99,23 @@ class JqlSelectOperation extends AbstractTerm
         return $results;
     }
 
-    public function join(Environment $env, stdClass $value, array $rows = array())
+    public function join(Environment $env, $term, array $rows = array())
     {
         return $rows;
     }
 
-    public function where(Environment $env, stdClass $where, array $rows = array())
+    public function where(Environment $env, $where, array $rows = array())
     {
         $key = 'w';
 
-        if (!isset($where->{$key})) {
+        if (!$env->has($where, $key)) {
             return $rows;
         }
 
         $results = array_filter($rows, function ($row) use ($env, $where, $key) {
             $env->push($row);
 
-            $result = $env->run($where->{$key});
+            $result = $env->run($env->get($where, $key));
 
             $env->pop();
 
@@ -125,12 +125,12 @@ class JqlSelectOperation extends AbstractTerm
         return $results;
     }
 
-    public function group(Environment $env, stdClass $value, array $rows = array())
+    public function group(Environment $env, $term, array $rows = array())
     {
         return $rows;
     }
 
-    public function value(Environment $env, stdClass $ops, array $rows = array())
+    public function value(Environment $env, $ops, array $rows = array())
     {
         $key = 'v';
 
@@ -141,7 +141,7 @@ class JqlSelectOperation extends AbstractTerm
 
             $result = array();
 
-            foreach ($ops->{$key} as $op) {
+            foreach ($env->get($ops, $key) as $op) {
                 $result = array_merge($result, $env->run($op));
             }
 
@@ -153,22 +153,22 @@ class JqlSelectOperation extends AbstractTerm
         return $results;
     }
 
-    public function having(Environment $env, stdClass $value, array $rows = array())
+    public function having(Environment $env, $term, array $rows = array())
     {
         return $rows;
     }
 
-    public function order(Environment $env, stdClass $value, array $rows = array())
+    public function order(Environment $env, $term, array $rows = array())
     {
         return $rows;
     }
 
-    public function skip(Environment $env, stdClass $value, array $rows = array())
+    public function skip(Environment $env, $term, array $rows = array())
     {
         return $rows;
     }
 
-    public function limit(Environment $env, stdClass $value, array $rows = array())
+    public function limit(Environment $env, $term, array $rows = array())
     {
         return $rows;
     }

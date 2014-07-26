@@ -11,8 +11,8 @@ class SqlNotOperation extends AbstractUnaryOperation
         parent::__construct('not');
     }
 
-    public function operate($value)
+    public function operate($term)
     {
-        return "not " . $value;
+        return "not " . $term;
     }
 }

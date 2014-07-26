@@ -25,7 +25,7 @@ class QueryBuilder
         return $this->term_builder->make('false')->build();
     }
 
-    public function eq(stdClass $a, stdClass $b)
+    public function eq($a, $b)
     {
         return $this->term_builder
             ->make('equal')
@@ -34,27 +34,27 @@ class QueryBuilder
             ->build();
     }
 
-    public function not($value)
+    public function not($term)
     {
         return $this->term_builder
             ->make('not')
-            ->set('v', $value)
+            ->set('v', $term)
             ->build();
     }
 
-    public function ands(array $values = array())
+    public function ands(array $terms = array())
     {
         return $this->term_builder
             ->make('and')
-            ->set('v', $values)
+            ->set('v', $terms)
             ->build();
     }
 
-    public function ors(array $values = array())
+    public function ors(array $terms = array())
     {
         return $this->term_builder
             ->make('or')
-            ->set('v', $values)
+            ->set('v', $terms)
             ->build();
     }
 

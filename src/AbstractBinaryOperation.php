@@ -2,29 +2,29 @@
 
 abstract class AbstractBinaryOperation extends AbstractTerm
 {
-    public final function run(Environment $env, stdClass $value)
+    public final function run(Environment $env, $term)
     {
-        return $this->operate($env->run($value->a), $env->run($value->b));
+        return $this->operate($env->run($env->get($term, 'a')), $env->run($env->get($term, 'b')));
     }
 
     public abstract function operate($a, $b);
 
-    public function verifyFields(Environment $env, stdClass $value)
+    public function verifyFields(Environment $env, $term)
     {
         return
-            isset($value->a) &&
-            isset($value->b) &&
-            $this->verifyA($env, $value->a) &&
-            $this->verifyB($env, $value->b);
+            $env->has($term, 'a') &&
+            $env->has($term, 'b') &&
+            $this->verifyA($env, $env->get($term, 'a')) &&
+            $this->verifyB($env, $env->get($term, 'b'));
     }
 
-    public function verifyA(Environment $env, $value)
+    public function verifyA(Environment $env, $term)
     {
-        return $env->verify($value);
+        return $env->verify($term);
     }
 
-    public function verifyB(Environment $env, $value)
+    public function verifyB(Environment $env, $term)
     {
-        return $env->verify($value);
+        return $env->verify($term);
     }
 }

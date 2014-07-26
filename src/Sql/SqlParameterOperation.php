@@ -2,8 +2,8 @@
 
 namespace Sql;
 
-use Environment;
 use AbstractSoftValueTerm;
+use Environment;
 
 class SqlParameterOperation extends AbstractSoftValueTerm
 {
@@ -12,9 +12,9 @@ class SqlParameterOperation extends AbstractSoftValueTerm
         parent::__construct('param');
     }
 
-    public function operate(Environment $env, $value)
+    public function operate(Environment $env, $term)
     {
-        $env->parameter($value);
+        $env->parameter($term);
 
         return '?';
     }
