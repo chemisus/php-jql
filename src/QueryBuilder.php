@@ -2,96 +2,101 @@
 
 class QueryBuilder
 {
+    /**
+     * @var TermBuilder
+     */
+    private $term_builder;
+
+    /**
+     * @param TermBuilder $term_builder
+     */
+    public function __construct(TermBuilder $term_builder)
+    {
+        $this->term_builder = $term_builder;
+    }
+
     public function true()
     {
-        $term = new stdClass();
-        $term->t = 'true';
-        return $term;
+        return $this->term_builder->make('true')->build();
     }
 
     public function false()
     {
-        $term = new stdClass();
-        $term->t = 'false';
-        return $term;
+        return $this->term_builder->make('false')->build();
     }
 
     public function eq(stdClass $a, stdClass $b)
     {
-        $term = new stdClass();
-        $term->t = 'equal';
-        $term->a = $a;
-        $term->b = $b;
-        return $term;
+        return $this->term_builder
+            ->make('equal')
+            ->set('a', $a)
+            ->set('b', $b)
+            ->build();
     }
 
     public function not($value)
     {
-        $term = new stdClass();
-        $term->t = 'not';
-        $term->v = $value;
-        return $term;
+        return $this->term_builder
+            ->make('not')
+            ->set('v', $value)
+            ->build();
     }
 
     public function ands(array $values = array())
     {
-        $term = new stdClass();
-        $term->t = 'and';
-        $term->v = $values;
-        return $term;
+        return $this->term_builder
+            ->make('and')
+            ->set('v', $values)
+            ->build();
     }
 
     public function ors(array $values = array())
     {
-        $term = new stdClass();
-        $term->t = 'or';
-        $term->v = $values;
-        return $term;
+        return $this->term_builder
+            ->make('or')
+            ->set('v', $values)
+            ->build();
     }
 
     public function select($v, $f = null, $w = null)
     {
-        $term = new stdClass();
-        $term->t = 'select';
-        $term->v = $v;
-        if ($f !== null) {
-            $term->f = $f;
-        }
-        if ($w !== null) {
-            $term->w = $w;
-        }
-        return $term;
+        return $this->term_builder
+            ->make('select')
+            ->set('v', $v)
+            ->set('f', $f, false)
+            ->set('w', $w, false)
+            ->build();
     }
 
     public function entity($value)
     {
-        $term = new stdClass();
-        $term->t = 'entity';
-        $term->v = $value;
-        return $term;
+        return $this->term_builder
+            ->make('entity')
+            ->set('v', $value)
+            ->build();
     }
 
     public function param($value)
     {
-        $term = new stdClass();
-        $term->t = 'param';
-        $term->v = $value;
-        return $term;
+        return $this->term_builder
+            ->make('param')
+            ->set('v', $value)
+            ->build();
     }
 
     public function table($value)
     {
-        $term = new stdClass();
-        $term->t = 'table';
-        $term->v = $value;
-        return $term;
+        return $this->term_builder
+            ->make('table')
+            ->set('v', $value)
+            ->build();
     }
 
     public function field($value)
     {
-        $term = new stdClass();
-        $term->t = 'field';
-        $term->v = $value;
-        return $term;
+        return $this->term_builder
+            ->make('field')
+            ->set('v', $value)
+            ->build();
     }
 }

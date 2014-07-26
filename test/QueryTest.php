@@ -42,7 +42,7 @@ class QueryTest extends TestCase
 
     public function testEqualTrue()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'true=true';
         $jql = true;
@@ -58,7 +58,7 @@ class QueryTest extends TestCase
 
     public function testEqualFalse()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'true=false';
         $jql = false;
@@ -74,7 +74,7 @@ class QueryTest extends TestCase
 
     public function testNotTrue()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'not true';
         $jql = false;
@@ -87,7 +87,7 @@ class QueryTest extends TestCase
 
     public function testNotFalse()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'not false';
         $jql = true;
@@ -100,7 +100,7 @@ class QueryTest extends TestCase
 
     public function testAndTrue()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'true and true and true';
         $jql = true;
@@ -117,7 +117,7 @@ class QueryTest extends TestCase
 
     public function testAndFalse()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'true and false and true';
         $jql = false;
@@ -134,7 +134,7 @@ class QueryTest extends TestCase
 
     public function testOrTrue()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = '(true) or (false) or (false)';
         $jql = true;
@@ -151,7 +151,7 @@ class QueryTest extends TestCase
 
     public function testOrFalse()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = '(false) or (false) or (false)';
         $jql = false;
@@ -168,7 +168,7 @@ class QueryTest extends TestCase
 
     public function testSelectFromUsers()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select * from "users"';
         $jql = array(
@@ -190,7 +190,7 @@ class QueryTest extends TestCase
     {
         $this->markTestSkipped('something weird happens with likes. maybe a foreign key thing?');
 
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select * from "users", "likes"';
         $jql = array(
@@ -222,7 +222,7 @@ class QueryTest extends TestCase
 
     public function testSelectFromUsersLikesBooks()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select * from "users", "books", "likes"';
         $jql = array(
@@ -284,7 +284,7 @@ class QueryTest extends TestCase
 
     public function testSelectAllFromUsers()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select * from "users"';
         $jql = array(
@@ -304,7 +304,7 @@ class QueryTest extends TestCase
 
     public function testSelectIdFromUsers()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select "users"."id" from "users"';
         $jql = array(
@@ -324,7 +324,7 @@ class QueryTest extends TestCase
 
     public function testSelectAllFromUsersWhereIdIs1()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select * from "users" where "users"."id"=?';
         $jql = array(
@@ -344,7 +344,7 @@ class QueryTest extends TestCase
 
     public function testExecute()
     {
-        $q = new QueryBuilder();
+        $q = new QueryBuilder(new ObjectTermBuilder());
 
         $sql = 'select * from "users" where "users"."id"=?';
 
@@ -353,6 +353,8 @@ class QueryTest extends TestCase
             array($q->table('users')),
             $q->eq($q->field("users.id"), $q->param(1))
         );
+
+        print_r(json_encode($query));
 
         $this->assertEquals($sql, $this->sql->run($query));
         $this->assertEquals($this->sql->execute($query), $this->jql->execute($query));
