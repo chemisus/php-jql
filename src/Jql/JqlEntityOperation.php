@@ -14,6 +14,12 @@ class JqlEntityOperation extends AbstractSoftValueTerm
 
     public function operate(Environment $env, $value)
     {
-        return array($value => array_keys($env->entity($value)));
+        $current = $env->current();
+
+        if ($value === '*') {
+            return $current;
+        }
+
+        return array($value => $current[$value]);
     }
 }

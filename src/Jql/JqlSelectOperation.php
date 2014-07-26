@@ -51,6 +51,17 @@ class JqlSelectOperation extends AbstractTerm
         return $rows;
     }
 
+    public function flatten($table, $row)
+    {
+        $result = array();
+
+        foreach ($row as $key => $value) {
+            $result[$table . '.' . $key] = $value;
+        }
+
+        return $result;
+    }
+
     public function from(Environment $env, stdClass $ops)
     {
         $key = 'f';
@@ -61,22 +72,13 @@ class JqlSelectOperation extends AbstractTerm
             foreach ($env->run($op) as $table => $rows) {
                 if (!count($results)) {
                     foreach ($rows as $id => $row) {
-                        $result = array();
-                        foreach ($row as $key => $value) {
-                            $result[$table . '.' . $key] = $value;
-                        }
-                        $results[] = $result;
+                        $results[] = $this->flatten($table, $row);
                     }
                 } else {
                     $rs = array();
-                    foreach ($rows as $id => $row) {
-                        foreach($results as $result) {
-                            $r = array_merge($result, array());
-                            foreach ($row as $key => $value) {
-                                $r[$table . '.' . $key] = $value;
-                            }
-
-                            $rs[] = $r;
+                    foreach ($results as $result) {
+                        foreach ($rows as $id => $row) {
+                            $rs[] = array_merge($this->flatten($table, $row), $result);
                         }
                     }
                     $results = $rs;
@@ -112,9 +114,27 @@ class JqlSelectOperation extends AbstractTerm
         return $rows;
     }
 
-    public function value(Environment $env, stdClass $value, array $rows = array())
+    public function value(Environment $env, stdClass $ops, array $rows = array())
     {
-        return $rows;
+        $key = 'v';
+
+        $results = array();
+
+        foreach ($rows as $row) {
+            $env->push($row);
+
+            $result = array();
+
+            foreach($ops->{$key} as $op) {
+                $result = array_merge($result, $env->run($op));
+            }
+
+            $env->pop();
+
+            $results[] = $result;
+        }
+
+        return $results;
     }
 
     public function having(Environment $env, stdClass $value, array $rows = array())

@@ -7,6 +7,7 @@ use AbstractEnvironment;
 class JqlEnvironment extends AbstractEnvironment
 {
     private $tables;
+    private $stack = array();
 
     public function __construct($tables)
     {
@@ -29,5 +30,20 @@ class JqlEnvironment extends AbstractEnvironment
     public function entity($entity)
     {
         return $this->tables[$entity];
+    }
+
+    public function push($value)
+    {
+        array_push($this->stack, $value);
+    }
+
+    public function current()
+    {
+        return end($this->stack);
+    }
+
+    public function pop()
+    {
+        array_pop($this->stack);
     }
 }
