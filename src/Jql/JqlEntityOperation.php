@@ -17,9 +17,16 @@ class JqlEntityOperation extends AbstractSoftValueTerm
         $current = $env->current();
 
         if ($term === '*') {
-            return $current;
+            return array_reduce($current, 'array_merge', array());
         }
 
-        return array($term => $current[$term]);
+        $keys = explode('.', $term);
+
+        if (count($keys) === 2) {
+            return array($keys[1] => $current[$keys[0]][$keys[1]]);
+            return array($keys[0] => array($keys[1] => $current[$keys[0]][$keys[1]]));
+        }
+
+        throw new \Exception('not yet implemented.');
     }
 }

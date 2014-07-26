@@ -48,32 +48,7 @@ class JqlSelectOperation extends AbstractTerm
         $rows = $this->skip($env, $term, $rows);
         $rows = $this->limit($env, $term, $rows);
 
-        $results = array();
-
-        foreach ($rows as $row) {
-            $result = array();
-            foreach ($row as $key => $value) {
-                $k = explode('.', $key);
-                $k = array_pop($k);
-                $result[$k] = $value;
-            }
-            $results[] = $result;
-        }
-
-        return $results;
-
         return $rows;
-    }
-
-    public function flatten($table, $row)
-    {
-        $result = array();
-
-        foreach ($row as $key => $value) {
-            $result[$table . '.' . $key] = $value;
-        }
-
-        return $result;
     }
 
     public function from(Environment $env, $terms)
@@ -86,13 +61,13 @@ class JqlSelectOperation extends AbstractTerm
             foreach ($env->run($term) as $table => $rows) {
                 if (!count($results)) {
                     foreach ($rows as $id => $row) {
-                        $results[] = $this->flatten($table, $row);
+                        $results[] = array($table => $row);
                     }
                 } else {
                     $rs = array();
                     foreach ($results as $result) {
                         foreach ($rows as $id => $row) {
-                            $rs[] = array_merge($this->flatten($table, $row), $result);
+                            $rs[] = array_merge(array($table => $row), $result);
                         }
                     }
                     $results = $rs;

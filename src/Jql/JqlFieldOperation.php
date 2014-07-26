@@ -16,6 +16,12 @@ class JqlFieldOperation extends AbstractSoftValueTerm
     {
         $current = $env->current();
 
-        return $current[$term];
+        $keys = explode('.', $term);
+
+        if (count($keys) === 2) {
+            return $current[$keys[0]][$keys[1]];
+        }
+
+        throw new \Exception('not yet implemented.');
     }
 }
