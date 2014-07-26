@@ -105,4 +105,13 @@ class QueryBuilder
             ->set('v', $value)
             ->build();
     }
+
+    public function alias($a, $b)
+    {
+        return $this->term_builder
+            ->make('alias')
+            ->set('a', $a)
+            ->set('b', $b)
+            ->build();
+    }
 }

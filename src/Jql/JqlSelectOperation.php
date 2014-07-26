@@ -5,7 +5,6 @@ namespace Jql;
 use AbstractTerm;
 use Environment;
 
-
 class JqlSelectOperation extends AbstractTerm
 {
     public function __construct()

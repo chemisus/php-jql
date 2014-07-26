@@ -29,6 +29,7 @@ class SqlEnvironment extends AbstractEnvironment
             new SqlEntityOperation(),
             new SqlParameterOperation(),
             new SqlFieldOperation(),
+            new SqlAliasOperation(),
         ));
 
         $this->pdo = $pdo;

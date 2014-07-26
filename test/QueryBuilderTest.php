@@ -2,20 +2,6 @@
 
 class QueryBuilderTest extends TestCase
 {
-    /**
-     * @var Environment
-     */
-    private $sql;
-
-    /**
-     * @var Environment
-     */
-    private $jql;
-
-    public function setUp()
-    {
-    }
-
     public function queryBuilderProvider()
     {
         $sdb = new PDO("pgsql:dbname=users_books;host=localhost", "homestead", "secret");
@@ -482,6 +468,39 @@ class QueryBuilderTest extends TestCase
             $q->ors(array(
                 $q->eq($q->field("users.id"), $q->param(1)),
                 $q->eq($q->field("users.id"), $q->param(2))
+            )),
+            null,
+            null,
+            null,
+            $q->param(1),
+            $q->param(1)
+        );
+
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->execute($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testAlias(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select ("users"."id") as "id_alias" from "users" where ("users"."id"=?) or ("users"."id"=?) limit ? offset ?';
+        $jql = array(
+            array('id_alias' => 2),
+        );
+
+        $query = $q->select(
+            array($q->alias($q->entity('users.id'), 'id_alias')),
+            array($q->table('users')),
+            null,
+            $q->ors(array(
+                $q->eq($q->field('users.id'), $q->param(1)),
+                $q->eq($q->field('users.id'), $q->param(2))
             )),
             null,
             null,

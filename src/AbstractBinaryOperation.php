@@ -4,7 +4,7 @@ abstract class AbstractBinaryOperation extends AbstractTerm
 {
     public final function run(Environment $env, $term)
     {
-        return $this->operate($env->run($env->get($term, 'a')), $env->run($env->get($term, 'b')));
+        return $this->operate($this->runA($env, $env->get($term, 'a')), $this->runB($env, $env->get($term, 'b')));
     }
 
     public abstract function operate($a, $b);
@@ -26,5 +26,13 @@ abstract class AbstractBinaryOperation extends AbstractTerm
     public function verifyB(Environment $env, $term)
     {
         return $env->verify($term);
+    }
+
+    public function runA(Environment $env, $term) {
+        return $env->run($term);
+    }
+
+    public function runB(Environment $env, $term) {
+        return $env->run($term);
     }
 }
