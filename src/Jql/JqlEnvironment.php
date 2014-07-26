@@ -25,6 +25,9 @@ class JqlEnvironment extends AbstractEnvironment
             new JqlParameterOperation(),
             new JqlFieldOperation(),
             new JqlAliasOperation(),
+            new JqlGreaterThanOperation(),
+            new JqlLesserThanOperation(),
+            new JqlSubqueryOperation(),
         ));
 
         $this->tables = $tables;

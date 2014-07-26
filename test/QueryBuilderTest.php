@@ -543,4 +543,94 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals($jql, $jql_env->execute($query));
         $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testGreaterThan(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select * from "users" where "users"."id">?';
+        $jql = array(
+            array('id' => 2, 'name' => 'jessica'),
+            array('id' => 3, 'name' => 'mike'),
+        );
+
+        $query = $q->select(
+            array($q->entity('*')),
+            array($q->table('users')),
+            null,
+            $q->gt($q->field('users.id'), $q->param(1))
+        );
+
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->execute($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testLesserThan(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select * from "users" where "users"."id"<?';
+        $jql = array(
+            array('id' => 1, 'name' => 'terrence'),
+            array('id' => 2, 'name' => 'jessica'),
+        );
+
+        $query = $q->select(
+            array($q->entity('*')),
+            array($q->table('users')),
+            null,
+            $q->lt($q->field('users.id'), $q->param(3))
+        );
+
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->execute($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSubQuery(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select "t"."id", "t"."name" from (select * from "users" where "users"."id">?) as "t" where "t"."id"<?';
+        $jql = array(
+            array('id' => 2, 'name' => 'jessica'),
+        );
+
+        $query = $q->select(
+            array(
+                $q->entity('t.id'),
+                $q->entity('t.name'),
+            ),
+            array(
+                $q->subquery(
+                    $q->select(
+                        array($q->entity('*')),
+                        array($q->table('users')),
+                        null,
+                        $q->gt($q->field("users.id"), $q->param(1))
+                    ),
+                    't'
+                )
+            ),
+            null,
+            $q->lt($q->field("t.id"), $q->param(3))
+        );
+
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->execute($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
+    }
 }

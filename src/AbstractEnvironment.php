@@ -72,6 +72,12 @@ abstract class AbstractEnvironment implements Environment
      */
     public function run($term)
     {
+        $debug = false;
+
+        if ($debug) {
+            var_dump('running ' . $this->name($term));
+        }
+
         if (!$this->verify($term)) {
             throw new Exception(' verification failed');
         }

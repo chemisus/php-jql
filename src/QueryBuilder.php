@@ -34,6 +34,24 @@ class QueryBuilder
             ->build();
     }
 
+    public function gt($a, $b)
+    {
+        return $this->term_builder
+            ->make('gt')
+            ->set('a', $a)
+            ->set('b', $b)
+            ->build();
+    }
+
+    public function lt($a, $b)
+    {
+        return $this->term_builder
+            ->make('lt')
+            ->set('a', $a)
+            ->set('b', $b)
+            ->build();
+    }
+
     public function not($term)
     {
         return $this->term_builder
@@ -110,6 +128,15 @@ class QueryBuilder
     {
         return $this->term_builder
             ->make('alias')
+            ->set('a', $a)
+            ->set('b', $b)
+            ->build();
+    }
+
+    public function subquery($a, $b)
+    {
+        return $this->term_builder
+            ->make('sq')
             ->set('a', $a)
             ->set('b', $b)
             ->build();
