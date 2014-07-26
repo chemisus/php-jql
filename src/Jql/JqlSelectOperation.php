@@ -140,7 +140,7 @@ class JqlSelectOperation extends AbstractTerm
             $result = array();
 
             foreach ($env->get($terms, $key) as $term) {
-                $result = array_merge($result, $env->run($term));
+                $result = array_merge($result, (array)$env->run($term));
             }
 
             $env->pop();

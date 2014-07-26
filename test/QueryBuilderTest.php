@@ -659,6 +659,7 @@ class QueryBuilderTest extends TestCase
 
         $this->assertEquals($jql, $jql_env->run($query));
         $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
     /**
@@ -686,6 +687,7 @@ class QueryBuilderTest extends TestCase
 
         $this->assertEquals($jql, $jql_env->run($query));
         $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
     /**
@@ -696,14 +698,12 @@ class QueryBuilderTest extends TestCase
      */
     public function testLeftJoin(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
     {
-        $this->markTestIncomplete();
-
         $sql = 'select "users"."id", "users"."name", "books"."title" from "users" left join "books" as "books" on "books"."author_id"="users"."id"';
         $jql = array(
             array('id' => 1, 'name' => "terrence", 'title' => "C++"),
             array('id' => 1, 'name' => "terrence", 'title' => "Java"),
             array('id' => 2, 'name' => "jessica", 'title' => "PHP"),
-            array('id' => 3, 'name' => "mike", 'title' => ""),
+            array('id' => 3, 'name' => "mike", 'title' => null),
 
         );
 
@@ -725,8 +725,11 @@ class QueryBuilderTest extends TestCase
             )
         );
 
+        var_dump($sql_env->execute($query)[3] === $jql_env->execute($query)[3]);
+
         $this->assertEquals($sql, $sql_env->run($query));
         $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
     /**
@@ -764,5 +767,6 @@ class QueryBuilderTest extends TestCase
 
         $this->assertEquals($sql, $sql_env->run($query));
         $this->assertEquals($jql, $jql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 }

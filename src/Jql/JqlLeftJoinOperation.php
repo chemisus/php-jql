@@ -19,8 +19,8 @@ class JqlLeftJoinOperation extends AbstractBinaryOperation
 
         foreach($this->runA($env, $env->get($term, 'a')) as $table=>$rows) {
             foreach($rows as $row) {
-                $current = array_merge($env->current(), array($table => $row));
 
+                $current = array_merge($env->current(), array($table => $row));
                 $env->push($current);
 
                 if ($this->runB($env, $env->get($term, 'b'))) {
@@ -29,6 +29,10 @@ class JqlLeftJoinOperation extends AbstractBinaryOperation
 
                 $env->pop();
             }
+        }
+
+        if (!count($results)) {
+            $results = array($env->current());
         }
 
         return $results;

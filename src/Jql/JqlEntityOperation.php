@@ -23,13 +23,22 @@ class JqlEntityOperation extends AbstractSoftValueTerm
         $keys = explode('.', $term);
 
         if (count($keys) === 2) {
-            return array($keys[1] => $current[$keys[0]][$keys[1]]);
+            if (isset($current[$keys[0]])) {
+                if (isset($current[$keys[0]][$keys[1]])) {
+                    return array($keys[1] => $current[$keys[0]][$keys[1]]);
+                }
+            }
+
+            return array($keys[1] => null);
         }
 
         if (count($keys) === 1) {
             $current = array_reduce($current, 'array_merge', array());
+            if (isset($current[$keys[0]])) {
+                return array($keys[0] => $current[$keys[0]]);
+            }
 
-            return array($keys[0] => $current[$keys[0]]);
+            return array($keys[0] => null);
         }
 
         throw new \Exception('Invalid entity name.');
