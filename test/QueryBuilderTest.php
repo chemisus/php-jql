@@ -408,6 +408,7 @@ class QueryBuilderTest extends TestCase
         $query = $q->select(
             array($q->entity('*')),
             array($q->table('users')),
+            null,
             $q->eq($q->field("users.id"), $q->param(1))
         );
 
@@ -429,6 +430,7 @@ class QueryBuilderTest extends TestCase
         $query = $q->select(
             array($q->entity('*')),
             array($q->table('users')),
+            null,
             $q->eq($q->field("users.id"), $q->param(1))
         );
 

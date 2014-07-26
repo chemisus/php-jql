@@ -58,13 +58,19 @@ class QueryBuilder
             ->build();
     }
 
-    public function select($v, $f = null, $w = null)
+    public function select($v = null, $f = null, $j = null, $w = null, $g = null, $h = null, $o = null, $l = null, $s = null)
     {
         return $this->term_builder
             ->make('select')
             ->set('v', $v)
             ->set('f', $f, false)
+            ->set('j', $j, false)
             ->set('w', $w, false)
+            ->set('g', $g, false)
+            ->set('h', $h, false)
+            ->set('o', $o, false)
+            ->set('l', $l, false)
+            ->set('s', $s, false)
             ->build();
     }
 

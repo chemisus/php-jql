@@ -62,14 +62,14 @@ class JqlSelectOperation extends AbstractTerm
         return $result;
     }
 
-    public function from(Environment $env, $ops)
+    public function from(Environment $env, $terms)
     {
         $key = 'f';
 
         $results = array();
 
-        foreach ($env->get($ops, $key) as $op) {
-            foreach ($env->run($op) as $table => $rows) {
+        foreach ($env->get($terms, $key) as $term) {
+            foreach ($env->run($term) as $table => $rows) {
                 if (!count($results)) {
                     foreach ($rows as $id => $row) {
                         $results[] = $this->flatten($table, $row);
@@ -86,16 +86,6 @@ class JqlSelectOperation extends AbstractTerm
             }
         }
 
-//        $result = array_reduce(array_map(function ($op) use ($env) {
-//            return $env->run($op);
-//        }, $env->get($term, $key)), function ($initial, $current) {
-//            if ($initial === null) {
-//                return $current;
-//            }
-//
-//
-//        }, null);
-
         return $results;
     }
 
@@ -104,18 +94,18 @@ class JqlSelectOperation extends AbstractTerm
         return $rows;
     }
 
-    public function where(Environment $env, $where, array $rows = array())
+    public function where(Environment $env, $term, array $rows = array())
     {
         $key = 'w';
 
-        if (!$env->has($where, $key)) {
+        if (!$env->has($term, $key)) {
             return $rows;
         }
 
-        $results = array_filter($rows, function ($row) use ($env, $where, $key) {
+        $results = array_filter($rows, function ($row) use ($env, $term, $key) {
             $env->push($row);
 
-            $result = $env->run($env->get($where, $key));
+            $result = $env->run($env->get($term, $key));
 
             $env->pop();
 
@@ -130,7 +120,7 @@ class JqlSelectOperation extends AbstractTerm
         return $rows;
     }
 
-    public function value(Environment $env, $ops, array $rows = array())
+    public function value(Environment $env, $terms, array $rows = array())
     {
         $key = 'v';
 
@@ -141,8 +131,8 @@ class JqlSelectOperation extends AbstractTerm
 
             $result = array();
 
-            foreach ($env->get($ops, $key) as $op) {
-                $result = array_merge($result, $env->run($op));
+            foreach ($env->get($terms, $key) as $term) {
+                $result = array_merge($result, $env->run($term));
             }
 
             $env->pop();
@@ -153,23 +143,35 @@ class JqlSelectOperation extends AbstractTerm
         return $results;
     }
 
-    public function having(Environment $env, $term, array $rows = array())
+    public function having(Environment $env, $terms, array $rows = array())
     {
         return $rows;
     }
 
-    public function order(Environment $env, $term, array $rows = array())
+    public function order(Environment $env, $terms, array $rows = array())
     {
         return $rows;
     }
 
     public function skip(Environment $env, $term, array $rows = array())
     {
-        return $rows;
+        $key = 's';
+
+        if (!$env->has($term, $key)) {
+            return $rows;
+        }
+
+        return array_slice($rows, $env->run($term));
     }
 
     public function limit(Environment $env, $term, array $rows = array())
     {
-        return $rows;
+        $key = 'l';
+
+        if (!$env->has($term, $key)) {
+            return $rows;
+        }
+
+        return array_slice($rows, 0, $env->run($term));
     }
 }
