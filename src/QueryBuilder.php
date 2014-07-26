@@ -86,4 +86,12 @@ class QueryBuilder
         $term->v = $value;
         return $term;
     }
+
+    public function field($value)
+    {
+        $term = new stdClass();
+        $term->t = 'field';
+        $term->v = $value;
+        return $term;
+    }
 }

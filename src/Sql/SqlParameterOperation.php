@@ -14,6 +14,8 @@ class SqlParameterOperation extends AbstractSoftValueTerm
 
     public function operate(Environment $env, $value)
     {
-        return ':' . $value;
+        $env->parameter($value);
+
+        return '?';
     }
 }

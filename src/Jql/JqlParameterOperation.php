@@ -14,6 +14,6 @@ class JqlParameterOperation extends AbstractSoftValueTerm
 
     public function operate(Environment $env, $value)
     {
-        return ':' . $value;
+        return $value;
     }
 }

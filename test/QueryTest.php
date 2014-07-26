@@ -168,8 +168,6 @@ class QueryTest extends TestCase
 
     public function testSelectFromUsers()
     {
-        $this->markTestSkipped('cant have this with select values working.');
-
         $q = new QueryBuilder();
 
         $sql = 'select * from "users"';
@@ -224,8 +222,6 @@ class QueryTest extends TestCase
 
     public function testSelectFromUsersLikesBooks()
     {
-        $this->markTestSkipped('cant have this with select values working.');
-
         $q = new QueryBuilder();
 
         $sql = 'select * from "users", "books", "likes"';
@@ -324,6 +320,26 @@ class QueryTest extends TestCase
 
         $this->assertEquals($jql, $this->jql->run($query));
         $this->assertEquals($sql, $this->sql->run($query));
+    }
+
+    public function testSelectAllFromUsersWhereIdIs1()
+    {
+        $q = new QueryBuilder();
+
+        $sql = 'select * from "users" where "users"."id"=?';
+        $jql = array(
+            array('users.id' => 1, 'users.name' => 'terrence'),
+        );
+
+        $query = $q->select(
+            array($q->entity('*')),
+            array($q->table('users')),
+            $q->eq($q->field("users.id"), $q->param(1))
+        );
+
+        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $this->sql->run($query));
+        $this->assertEquals(array(1), $this->sql->parameters());
     }
 
 }

@@ -106,7 +106,23 @@ class JqlSelectOperation extends AbstractTerm
 
     public function where(Environment $env, stdClass $where, array $rows = array())
     {
-        return $rows;
+        $key = 'w';
+
+        if (!isset($where->{$key})) {
+            return $rows;
+        }
+
+        $results = array_filter($rows, function ($row) use ($env, $where, $key) {
+            $env->push($row);
+
+            $result = $env->run($where->{$key});
+
+            $env->pop();
+
+            return $result;
+        });
+
+        return $results;
     }
 
     public function group(Environment $env, stdClass $value, array $rows = array())
@@ -125,7 +141,7 @@ class JqlSelectOperation extends AbstractTerm
 
             $result = array();
 
-            foreach($ops->{$key} as $op) {
+            foreach ($ops->{$key} as $op) {
                 $result = array_merge($result, $env->run($op));
             }
 

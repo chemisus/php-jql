@@ -12,6 +12,8 @@ class SqlEnvironment extends AbstractEnvironment
      */
     private $pdo;
 
+    private $parameters = array();
+
     public function __construct(PDO $pdo)
     {
         parent::__construct(array(
@@ -25,8 +27,19 @@ class SqlEnvironment extends AbstractEnvironment
             new SqlTableOperation(),
             new SqlEntityOperation(),
             new SqlParameterOperation(),
+            new SqlFieldOperation(),
         ));
 
         $this->pdo = $pdo;
+    }
+
+    public function parameters()
+    {
+        return $this->parameters;
+    }
+
+    public function parameter($value)
+    {
+        $this->parameters[] = $value;
     }
 }
