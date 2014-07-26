@@ -59,12 +59,27 @@ class JqlSelectOperation extends AbstractTerm
 
         foreach ($ops->{$key} as $op) {
             foreach ($env->run($op) as $table => $rows) {
-                foreach ($rows as $id => $row) {
-                    $result = array();
-                    foreach ($row as $key => $value) {
-                        $result[$table . '.' . $key] = $value;
+                if (!count($results)) {
+                    foreach ($rows as $id => $row) {
+                        $result = array();
+                        foreach ($row as $key => $value) {
+                            $result[$table . '.' . $key] = $value;
+                        }
+                        $results[] = $result;
                     }
-                    $results[] = $result;
+                } else {
+                    $rs = array();
+                    foreach ($rows as $id => $row) {
+                        foreach($results as $result) {
+                            $r = array_merge($result, array());
+                            foreach ($row as $key => $value) {
+                                $r[$table . '.' . $key] = $value;
+                            }
+
+                            $rs[] = $r;
+                        }
+                    }
+                    $results = $rs;
                 }
             }
         }

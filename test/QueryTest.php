@@ -23,11 +23,11 @@ class QueryTest extends TestCase
                 array('id' => 3, 'name' => 'mike'),
             ),
             'likes' => array(
-                array('id' => 1, 'user_id' => 1, 'book_id' => 3),
+                array('id' => 1, 'user_id' => 1, 'book_id' => 1),
                 array('id' => 2, 'user_id' => 1, 'book_id' => 3),
-                array('id' => 3, 'user_id' => 2, 'book_id' => 3),
-                array('id' => 4, 'user_id' => 2, 'book_id' => 3),
-                array('id' => 5, 'user_id' => 3, 'book_id' => 3),
+                array('id' => 3, 'user_id' => 2, 'book_id' => 1),
+                array('id' => 4, 'user_id' => 2, 'book_id' => 2),
+                array('id' => 5, 'user_id' => 3, 'book_id' => 2),
             ),
             'books' => array(
                 array('id' => 1, 'name' => 'C++', 'author_id' => 1),
@@ -166,7 +166,7 @@ class QueryTest extends TestCase
         $this->assertEquals($jql, $this->jql->run($query));
     }
 
-    public function testSelect()
+    public function testSelectFromUsers()
     {
         $q = new QueryBuilder();
 
@@ -180,6 +180,38 @@ class QueryTest extends TestCase
         $query = $q->select(
             array($q->entity('*')),
             array($q->table('users'))
+        );
+
+        $this->assertEquals($jql, $this->jql->run($query));
+        $this->assertEquals($sql, $this->sql->run($query));
+    }
+
+    public function testSelectFromUsersLikes()
+    {
+        $q = new QueryBuilder();
+
+        $sql = 'select * from "users", "likes"';
+        $jql = array(
+            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
+            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
+            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 1, 'likes.user_id' => 1, 'likes.book_id' => 1),
+            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
+            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
+            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 2, 'likes.user_id' => 1, 'likes.book_id' => 3),
+            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
+            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
+            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 3, 'likes.user_id' => 2, 'likes.book_id' => 1),
+            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
+            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
+            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 4, 'likes.user_id' => 2, 'likes.book_id' => 2),
+            array('users.id' => 1, 'users.name' => "terrence", 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
+            array('users.id' => 2, 'users.name' => "jessica", 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
+            array('users.id' => 3, 'users.name' => "mike", 'likes.id' => 5, 'likes.user_id' => 3, 'likes.book_id' => 2),
+        );
+
+        $query = $q->select(
+            array($q->entity('*')),
+            array($q->table('users'), $q->table('likes'))
         );
 
         $this->assertEquals($jql, $this->jql->run($query));
