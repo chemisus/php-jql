@@ -30,6 +30,7 @@ class JqlEnvironment extends AbstractEnvironment
             new JqlSubqueryOperation(),
             new JqlLeftJoinOperation(),
             new JqlRightJoinOperation(),
+            new JqlFromOperation(),
         ));
 
         $this->tables = $tables;

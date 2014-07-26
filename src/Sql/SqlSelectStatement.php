@@ -60,7 +60,7 @@ class SqlSelectOperation extends AbstractTerm
             return '';
         }
 
-        return ' from ' . implode(', ', array_map(function ($term) use ($env) {
+        return ' ' . implode(' ', array_map(function ($term) use ($env) {
             return $env->run($term);
         }, $env->get($term, $key)));
     }

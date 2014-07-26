@@ -219,7 +219,7 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users'))
+            array($q->from($q->table('users')))
         );
 
         $this->assertEquals($jql, $jql_env->run($query));
@@ -269,7 +269,7 @@ class QueryBuilderTest extends TestCase
                 $q->entity('likes.user_id'),
                 $q->entity('likes.book_id'),
             ),
-            array($q->table('users'), $q->table('likes'))
+            array($q->from($q->table('users'), $q->table('likes')))
         );
 
         $this->assertEquals($jql, $jql_env->run($query));
@@ -353,11 +353,16 @@ class QueryBuilderTest extends TestCase
                 $q->entity('likes.user_id'),
                 $q->entity('likes.book_id'),
             ),
-            array($q->table('users'), $q->table('books'), $q->table('likes'))
+            array(
+                $q->from($q->table('users')),
+                $q->leftJoin($q->table('books'), $q->true()),
+                $q->leftJoin($q->table('likes'), $q->true())
+            )
         );
 
         $this->assertEquals($jql, $jql_env->run($query));
-        $this->assertEquals($sql, $sql_env->run($query));
+//        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
     /**
@@ -377,11 +382,12 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users'))
+            array($q->from($q->table('users')))
         );
 
         $this->assertEquals($jql, $jql_env->run($query));
         $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
     /**
@@ -401,11 +407,12 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('users.id')),
-            array($q->table('users'))
+            array($q->from($q->table('users')))
         );
 
         $this->assertEquals($jql, $jql_env->run($query));
         $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
     /**
@@ -423,14 +430,14 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->eq($q->field("users.id"), $q->param(1))
         );
 
         $this->assertEquals($jql, $jql_env->run($query));
         $this->assertEquals($sql, $sql_env->run($query));
         $this->assertEquals(array(1), $sql_env->parameters());
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 
     /**
@@ -445,8 +452,7 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->eq($q->field("users.id"), $q->param(1))
         );
 
@@ -466,8 +472,7 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->ors(array(
                 $q->eq($q->field("users.id"), $q->param(1)),
                 $q->eq($q->field("users.id"), $q->param(2))
@@ -493,8 +498,7 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->ors(array(
                 $q->eq($q->field("users.id"), $q->param(1)),
                 $q->eq($q->field("users.id"), $q->param(2))
@@ -526,8 +530,7 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->alias($q->entity('users.id'), 'id_alias')),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->ors(array(
                 $q->eq($q->field('users.id'), $q->param(1)),
                 $q->eq($q->field('users.id'), $q->param(2))
@@ -560,8 +563,7 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->gt($q->field('users.id'), $q->param(1))
         );
 
@@ -586,8 +588,7 @@ class QueryBuilderTest extends TestCase
 
         $query = $q->select(
             array($q->entity('*')),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->lt($q->field('users.id'), $q->param(3))
         );
 
@@ -615,17 +616,15 @@ class QueryBuilderTest extends TestCase
                 $q->entity('t.name'),
             ),
             array(
-                $q->subquery(
+                $q->from($q->subquery(
                     $q->select(
                         array($q->entity('*')),
-                        array($q->table('users')),
-                        null,
+                        array($q->from($q->table('users'))),
                         $q->gt($q->field("users.id"), $q->param(1))
                     ),
                     't'
-                )
+                ))
             ),
-            null,
             $q->lt($q->field("t.id"), $q->param(3))
         );
 
@@ -654,7 +653,7 @@ class QueryBuilderTest extends TestCase
                 $q->entity('id'),
                 $q->entity('name')
             ),
-            array($q->table('users'))
+            array($q->from($q->table('users')))
         );
 
         $this->assertEquals($jql, $jql_env->run($query));
@@ -680,8 +679,7 @@ class QueryBuilderTest extends TestCase
                 $q->entity('id'),
                 $q->entity('name')
             ),
-            array($q->table('users')),
-            null,
+            array($q->from($q->table('users'))),
             $q->eq($q->field('id'), $q->param(2))
         );
 
@@ -713,9 +711,9 @@ class QueryBuilderTest extends TestCase
                 $q->entity('users.name'),
                 $q->entity('books.title'),
             ),
-            array($q->table('users')),
             array(
-                $x = $q->leftJoin(
+                $q->from($q->table('users')),
+                $q->leftJoin(
                     $q->alias($q->table('books'), 'books'),
                     $q->eq(
                         $q->field('books.author_id'),
@@ -751,9 +749,9 @@ class QueryBuilderTest extends TestCase
                 $q->entity('users.name'),
                 $q->entity('books.title'),
             ),
-            array($q->table('users')),
             array(
-                $x = $q->rightJoin(
+                $q->from($q->table('users')),
+                $q->rightJoin(
                     $q->alias($q->table('books'), 'books'),
                     $q->eq(
                         $q->field('books.author_id'),

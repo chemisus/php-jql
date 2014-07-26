@@ -13,6 +13,6 @@ class SqlRightJoinOperation extends AbstractBinaryOperation
 
     public function operate($a, $b)
     {
-        return " right join {$a} on {$b}";
+        return "right join {$a} on {$b}";
     }
 }

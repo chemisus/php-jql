@@ -39,7 +39,6 @@ class JqlSelectOperation extends AbstractTerm
     public function run(Environment $env, $term)
     {
         $rows = $this->from($env, $term);
-        $rows = $this->join($env, $term, $rows);
         $rows = $this->where($env, $term, $rows);
         $rows = $this->group($env, $term, $rows);
         $rows = $this->value($env, $term, $rows);
@@ -55,51 +54,25 @@ class JqlSelectOperation extends AbstractTerm
     {
         $key = 'f';
 
-        $results = array();
+        $terms = $env->get($terms, $key);
+        $term = array_shift($terms);
+        $rows = $env->run($term);
 
-        foreach ($env->get($terms, $key) as $term) {
-            foreach ($env->run($term) as $table => $rows) {
-                if (!count($results)) {
-                    foreach ($rows as $id => $row) {
-                        $results[] = array($table => $row);
-                    }
-                } else {
-                    $rs = array();
-                    foreach ($results as $result) {
-                        foreach ($rows as $id => $row) {
-                            $rs[] = array_merge(array($table => $row), $result);
-                        }
-                    }
-                    $results = $rs;
-                }
-            }
-        }
+        foreach ($terms as $term) {
+            $results = array();
 
-        return $results;
-    }
-
-    public function join(Environment $env, $terms, array $rows = array())
-    {
-        $key = 'j';
-
-        if (!$env->has($terms, $key)) {
-            return $rows;
-        }
-
-        $results = array();
-
-        foreach ($rows as $row) {
-            $env->push($row);
-            foreach ($env->get($terms, $key) as $term) {
+            foreach ($rows as $row) {
+                $env->push($row);
                 foreach ($env->run($term) as $result) {
                     $results[] = $result;
                 }
-
+                $env->pop();
             }
-            $env->pop();
+
+            $rows = $results;
         }
 
-        return $results;
+        return $rows;
     }
 
     public function where(Environment $env, $term, array $rows = array())
