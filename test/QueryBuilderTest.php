@@ -434,9 +434,64 @@ class QueryBuilderTest extends TestCase
             $q->eq($q->field("users.id"), $q->param(1))
         );
 
-        print_r(json_encode($query));
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testOrs(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select * from "users" where ("users"."id"=?) or ("users"."id"=?)';
+
+        $query = $q->select(
+            array($q->entity('*')),
+            array($q->table('users')),
+            null,
+            $q->ors(array(
+                $q->eq($q->field("users.id"), $q->param(1)),
+                $q->eq($q->field("users.id"), $q->param(2))
+            ))
+        );
 
         $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
+    }
+
+    /**
+     * @param Environment $sql_env
+     * @param Environment $jql_env
+     * @param QueryBuilder $q
+     * @dataProvider queryBuilderProvider
+     */
+    public function testLimitAndOffset(Environment $sql_env, Environment $jql_env, QueryBuilder $q)
+    {
+        $sql = 'select * from "users" where ("users"."id"=?) or ("users"."id"=?) limit ? offset ?';
+        $jql = array(
+            array('id' => 2, 'name' => 'jessica'),
+        );
+
+        $query = $q->select(
+            array($q->entity('*')),
+            array($q->table('users')),
+            null,
+            $q->ors(array(
+                $q->eq($q->field("users.id"), $q->param(1)),
+                $q->eq($q->field("users.id"), $q->param(2))
+            )),
+            null,
+            null,
+            null,
+            $q->param(1),
+            $q->param(1)
+        );
+
+        $this->assertEquals($sql, $sql_env->run($query));
+        $this->assertEquals($jql, $jql_env->execute($query));
         $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
     }
 }

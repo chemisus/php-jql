@@ -161,7 +161,7 @@ class JqlSelectOperation extends AbstractTerm
             return $rows;
         }
 
-        return array_slice($rows, $env->run($term));
+        return array_slice($rows, $env->run($env->get($term, $key)));
     }
 
     public function limit(Environment $env, $term, array $rows = array())
@@ -172,6 +172,6 @@ class JqlSelectOperation extends AbstractTerm
             return $rows;
         }
 
-        return array_slice($rows, 0, $env->run($term));
+        return array_slice($rows, 0, $env->run($env->get($term, $key)));
     }
 }
