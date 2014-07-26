@@ -4,6 +4,7 @@ namespace Sql;
 
 use AbstractEnvironment;
 use PDO;
+use stdClass;
 
 class SqlEnvironment extends AbstractEnvironment
 {
@@ -41,5 +42,20 @@ class SqlEnvironment extends AbstractEnvironment
     public function parameter($value)
     {
         $this->parameters[] = $value;
+    }
+
+    public function execute(stdClass $query)
+    {
+        $this->parameters = array();
+
+        $statement = $this->pdo->prepare($this->run($query));
+
+        $statement->execute($this->parameters());
+
+        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->parameters = array();
+
+        return $rows;
     }
 }

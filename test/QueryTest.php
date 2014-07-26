@@ -342,4 +342,19 @@ class QueryTest extends TestCase
         $this->assertEquals(array(1), $this->sql->parameters());
     }
 
+    public function testExecute()
+    {
+        $q = new QueryBuilder();
+
+        $sql = 'select * from "users" where "users"."id"=?';
+
+        $query = $q->select(
+            array($q->entity('*')),
+            array($q->table('users')),
+            $q->eq($q->field("users.id"), $q->param(1))
+        );
+
+        $this->assertEquals($sql, $this->sql->run($query));
+        $this->assertEquals($this->sql->execute($query), $this->jql->execute($query));
+    }
 }

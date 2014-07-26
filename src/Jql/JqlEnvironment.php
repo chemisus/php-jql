@@ -3,6 +3,7 @@
 namespace Jql;
 
 use AbstractEnvironment;
+use stdClass;
 
 class JqlEnvironment extends AbstractEnvironment
 {
@@ -46,5 +47,23 @@ class JqlEnvironment extends AbstractEnvironment
     public function pop()
     {
         array_pop($this->stack);
+    }
+
+    public function execute(stdClass $query)
+    {
+        $rows = $this->run($query);
+        $results = array();
+
+        foreach ($rows as $row) {
+            $result = array();
+            foreach ($row as $key => $value) {
+                $k = explode('.', $key);
+                $k = array_pop($k);
+                $result[$k] = $value;
+            }
+            $results[] = $result;
+        }
+
+        return $results;
     }
 }

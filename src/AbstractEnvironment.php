@@ -1,6 +1,6 @@
 <?php
 
-class AbstractEnvironment implements Environment
+abstract class AbstractEnvironment implements Environment
 {
     private $operations;
 
