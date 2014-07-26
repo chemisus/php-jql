@@ -725,8 +725,6 @@ class QueryBuilderTest extends TestCase
             )
         );
 
-        var_dump($sql_env->execute($query)[3] === $jql_env->execute($query)[3]);
-
         $this->assertEquals($sql, $sql_env->run($query));
         $this->assertEquals($jql, $jql_env->run($query));
         $this->assertEquals($sql_env->execute($query), $jql_env->execute($query));
