@@ -13,14 +13,14 @@ class ArrayTermBuilder implements TermBuilder, TermReader
         return $this;
     }
 
-    public function set($key, $term, $nulls = true)
+    public function set($key, $value, $nulls = true)
     {
-        if ($term !== null || $nulls) {
+        if ($value !== null || $nulls) {
             if (!isset($this->term[1])) {
                 $this->term[1] = new stdClass();
             }
 
-            $this->term[1]->{$key} = $term;
+            $this->term[1]->{$key} = &$value;
         }
 
         return $this;

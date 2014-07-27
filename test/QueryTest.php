@@ -108,4 +108,70 @@ class QueryTest extends TestCase
 
         $this->assertEquals($expect, $actual);
     }
+
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testWhereName(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('name' => 'terrence', 'title' => 'C++',),
+            array('name' => 'terrence', 'title' => 'Java',),
+        );
+
+        $actual = $qb->query()
+            ->select('name')
+            ->select('title')
+            ->from('books')
+            ->join('users', 'users.id', 'author_id')
+            ->where('name', 'terrence')
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testWhereNameAndTitle(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('name' => 'terrence', 'title' => 'C++',),
+        );
+
+        $actual = $qb->query()
+            ->select('name')
+            ->select('title')
+            ->from('books')
+            ->join('users', 'users.id', 'author_id')
+            ->where('name', 'terrence')
+            ->where('title', 'C++')
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testWhereNameAndTitleJava(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('name' => 'terrence', 'title' => 'Java',),
+        );
+
+        $actual = $qb->query()
+            ->select('name')
+            ->select('title')
+            ->from('books')
+            ->join('users', 'users.id', 'author_id')
+            ->where('name', 'terrence')
+            ->where('title', 'Java')
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
 }

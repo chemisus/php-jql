@@ -20,14 +20,14 @@ class ObjectTermBuilder implements TermBuilder, TermReader
 
     /**
      * @param $key
-     * @param $term
+     * @param $value
      * @param bool $nulls
      * @return $this|TermBuilder
      */
-    public function set($key, $term, $nulls = true)
+    public function set($key, $value, $nulls = true)
     {
-        if ($term !== null || $nulls) {
-            $this->term->{$key} = $term;
+        if ($value !== null || $nulls) {
+            $this->term->{$key} = &$value;
         }
 
         return $this;

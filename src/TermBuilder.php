@@ -10,11 +10,11 @@ interface TermBuilder
 
     /**
      * @param $key
-     * @param $term
+     * @param $value
      * @param bool $nulls
      * @return TermBuilder
      */
-    public function set($key, $term, $nulls = true);
+    public function set($key, $value, $nulls = true);
 
     /**
      * @return mixed
