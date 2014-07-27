@@ -1,6 +1,6 @@
 <?php
 
-class RawQueryBuilderTest extends TestCase
+class TermAssemblerTest extends TestCase
 {
     public function queryBuilderProvider()
     {
@@ -29,8 +29,8 @@ class RawQueryBuilderTest extends TestCase
         $otb = new ObjectTermBuilder();
         $atb = new ArrayTermBuilder();
 
-        $oqb = new RawQueryBuilder($otb);
-        $aqb = new RawQueryBuilder($atb);
+        $oqb = new TermAssembler($otb);
+        $aqb = new TermAssembler($atb);
 
         $sql_o = new Sql\SqlEnvironment($otb, $sdb);
         $jql_o = new Jql\JqlEnvironment($otb, $jdb);
@@ -47,10 +47,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testEqualTrue(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testEqualTrue(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'true=true';
         $jql = true;
@@ -67,10 +67,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testEqualFalse(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testEqualFalse(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'true=false';
         $jql = false;
@@ -87,10 +87,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testNotTrue(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testNotTrue(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'not true';
         $jql = false;
@@ -104,10 +104,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testNotFalse(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testNotFalse(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'not false';
         $jql = true;
@@ -121,10 +121,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testAndTrue(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testAndTrue(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'true and true and true';
         $jql = true;
@@ -142,10 +142,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testAndFalse(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testAndFalse(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'true and false and true';
         $jql = false;
@@ -163,10 +163,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testOrTrue(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testOrTrue(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = '(true) or (false) or (false)';
         $jql = true;
@@ -184,10 +184,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testOrFalse(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testOrFalse(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = '(false) or (false) or (false)';
         $jql = false;
@@ -205,10 +205,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectFromUsers(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectFromUsers(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users"';
         $jql = array(
@@ -229,10 +229,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectFromUsersLikes(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectFromUsersLikes(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $this->markTestSkipped('something weird happens with likes. maybe a foreign key thing?');
 
@@ -279,10 +279,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectFromUsersLeftJoinLikesLeftJoinBooks(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectFromUsersLeftJoinLikesLeftJoinBooks(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select' .
             ' "users"."id",' .
@@ -368,10 +368,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectFromUsersCrossJoinLikesCrossJoinBooks(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectFromUsersCrossJoinLikesCrossJoinBooks(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select' .
             ' "users"."id",' .
@@ -457,10 +457,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectAllFromUsers(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectAllFromUsers(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users"';
         $jql = array(
@@ -482,10 +482,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectIdFromUsers(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectIdFromUsers(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select "users"."id" from "users"';
         $jql = array(
@@ -507,10 +507,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectAllFromUsersWhereIdIs1(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectAllFromUsersWhereIdIs1(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users" where "users"."id"=?';
         $jql = array(
@@ -532,10 +532,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testExecute(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testExecute(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users" where "users"."id"=?';
 
@@ -552,10 +552,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testOrs(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testOrs(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users" where ("users"."id"=?) or ("users"."id"=?)';
 
@@ -575,10 +575,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testLimitAndOffset(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testLimitAndOffset(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users" where ("users"."id"=?) or ("users"."id"=?) limit ? offset ?';
         $jql = array(
@@ -607,10 +607,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testAlias(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testAlias(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select "users"."id" as "id_alias" from "users" where ("users"."id"=?) or ("users"."id"=?) limit ? offset ?';
         $jql = array(
@@ -639,10 +639,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testGreaterThan(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testGreaterThan(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users" where "users"."id">?';
         $jql = array(
@@ -664,10 +664,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testLesserThan(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testLesserThan(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select * from "users" where "users"."id"<?';
         $jql = array(
@@ -689,10 +689,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSubQuery(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSubQuery(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select "t"."id", "t"."name" from (select * from "users" where "users"."id">?) as "t" where "t"."id"<?';
         $jql = array(
@@ -725,10 +725,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectEntity(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectEntity(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select "id", "name" from "users"';
         $jql = array(
@@ -753,10 +753,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectField(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testSelectField(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select "id", "name" from "users" where "id"=?';
         $jql = array(
@@ -780,10 +780,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testLeftJoin(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testLeftJoin(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select "users"."id", "users"."name", "books"."title" from "users" left join "books" as "books" on "books"."author_id"="users"."id"';
         $jql = array(
@@ -820,10 +820,10 @@ class RawQueryBuilderTest extends TestCase
     /**
      * @param Environment $sql_env
      * @param Environment $jql_env
-     * @param RawQueryBuilder $q
+     * @param TermAssembler $q
      * @dataProvider queryBuilderProvider
      */
-    public function testRightJoin(Environment $sql_env, Environment $jql_env, RawQueryBuilder $q)
+    public function testRightJoin(Environment $sql_env, Environment $jql_env, TermAssembler $q)
     {
         $sql = 'select "users"."id", "users"."name", "books"."title" from "users" right join "books" as "books" on "books"."author_id"="users"."id"';
         $jql = array(

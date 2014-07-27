@@ -1,6 +1,6 @@
 <?php
 
-class QueryBuilder extends TestCase
+class QueryTest extends TestCase
 {
     public function queryBuilderProvider()
     {
@@ -29,11 +29,8 @@ class QueryBuilder extends TestCase
         $otb = new ObjectTermBuilder();
         $atb = new ArrayTermBuilder();
 
-        $oqb = new RawQueryBuilder($otb);
-        $aqb = new RawQueryBuilder($atb);
-
-        $oqb = new RawQueryBuilder($otb);
-        $aqb = new RawQueryBuilder($atb);
+        $oqb = new TermAssembler($otb);
+        $aqb = new TermAssembler($atb);
 
         $sql_o = new Sql\SqlEnvironment($otb, $sdb);
         $jql_o = new Jql\JqlEnvironment($otb, $jdb);
@@ -42,17 +39,30 @@ class QueryBuilder extends TestCase
         $jql_a = new Jql\JqlEnvironment($atb, $jdb);
 
         return array(
-            array($jql_a, $aqb),
-            array($sql_a, $aqb),
-            array($jql_o, $oqb),
-            array($sql_o, $oqb),
+            array(new QueryBuilder($sql_o, $oqb)),
+            array(new QueryBuilder($jql_o, $oqb)),
+            array(new QueryBuilder($sql_a, $aqb)),
+            array(new QueryBuilder($jql_a, $aqb)),
         );
     }
 
-//    public function test(Environment $env, QueryBuilder $qb)
-//    {
-//        $this->markTestSkipped();
-//
-//        $q = new Query($env, $qb);
-//    }
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testQuery(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('id' => 1),
+            array('id' => 2),
+            array('id' => 3),
+        );
+
+        $actual = $qb->query()
+            ->select('id')
+            ->from('users')
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
 }

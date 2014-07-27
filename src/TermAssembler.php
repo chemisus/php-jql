@@ -1,6 +1,6 @@
 <?php
 
-class RawQueryBuilder
+class TermAssembler
 {
     /**
      * @var TermBuilder
