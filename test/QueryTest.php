@@ -50,7 +50,7 @@ class QueryTest extends TestCase
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testQuery(QueryBuilder $qb)
+    public function testSelectIdFromUsers(QueryBuilder $qb)
     {
         $expect = array(
             array('id' => 1),
@@ -61,6 +61,26 @@ class QueryTest extends TestCase
         $actual = $qb->query()
             ->select('id')
             ->from('users')
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectIdAndAuthorFromBooks(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('id' => 1, 'author_id' => 1),
+            array('id' => 2, 'author_id' => 1),
+            array('id' => 3, 'author_id' => 2),
+        );
+
+        $actual = $qb->query()
+            ->select('id')
+            ->select('author_id')
+            ->from('books')
             ->get();
 
         $this->assertEquals($expect, $actual);
