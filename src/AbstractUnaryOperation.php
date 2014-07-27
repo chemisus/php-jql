@@ -2,12 +2,12 @@
 
 abstract class AbstractUnaryOperation extends AbstractTerm
 {
-    public final function run(Environment $env, $term)
+    public function run(Environment $env, $term)
     {
-        return $this->operate($env->run($env->get($term, 'v')));
+        return $this->operate($env, $env->run($env->get($term, 'v')));
     }
 
-    public abstract function operate($term);
+    public abstract function operate(Environment $env, $term);
 
     public function verifyFields(Environment $env, $term)
     {

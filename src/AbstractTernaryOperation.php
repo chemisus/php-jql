@@ -5,13 +5,14 @@ abstract class AbstractTernaryOperation extends AbstractTerm
     public final function run(Environment $env, $term)
     {
         return $this->operate(
+            $env,
             $this->runA($env, $env->get($term, 'a')),
             $this->runB($env, $env->get($term, 'b')),
             $this->runB($env, $env->get($term, 'c'))
         );
     }
 
-    public abstract function operate($a, $b, $c);
+    public abstract function operate(Environment $env, $a, $b, $c);
 
     public function verifyFields(Environment $env, $term)
     {
