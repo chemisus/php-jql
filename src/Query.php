@@ -33,6 +33,13 @@ class Query
         return $this;
     }
 
+    public function join($table, $on, $to)
+    {
+        $this->froms[] = $this->terms->leftJoin($this->terms->table($table), $this->terms->eq($this->terms->field($on), $this->terms->field($to)));
+
+        return $this;
+    }
+
     public function get()
     {
         return $this->env->execute(

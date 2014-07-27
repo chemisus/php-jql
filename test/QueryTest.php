@@ -65,6 +65,7 @@ class QueryTest extends TestCase
 
         $this->assertEquals($expect, $actual);
     }
+
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
@@ -82,6 +83,30 @@ class QueryTest extends TestCase
             ->select('author_id')
             ->from('books')
             ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testSelectIdAndAuthorFromBooksLeftJoinUser(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('name' => 'terrence', 'title' => 'C++',),
+            array('name' => 'terrence', 'title' => 'Java',),
+            array('name' => 'jessica', 'title' => 'PHP',),
+        );
+
+        $actual = $qb->query()
+            ->select('name')
+            ->select('title')
+            ->from('books')
+            ->join('users', 'users.id', 'author_id')
+            ->get();
+
+        var_dump($actual);
 
         $this->assertEquals($expect, $actual);
     }
