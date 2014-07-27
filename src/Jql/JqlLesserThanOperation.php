@@ -3,6 +3,7 @@
 namespace Jql;
 
 use AbstractBinaryOperation;
+use Environment;
 
 class JqlLesserThanOperation extends AbstractBinaryOperation
 {
@@ -11,7 +12,7 @@ class JqlLesserThanOperation extends AbstractBinaryOperation
         parent::__construct('lt');
     }
 
-    public function operate($a, $b)
+    public function operate(Environment $env, $a, $b)
     {
         return $a < $b;
     }

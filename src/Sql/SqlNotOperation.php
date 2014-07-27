@@ -3,6 +3,7 @@
 namespace Sql;
 
 use AbstractUnaryOperation;
+use Environment;
 
 class SqlNotOperation extends AbstractUnaryOperation
 {
@@ -11,7 +12,7 @@ class SqlNotOperation extends AbstractUnaryOperation
         parent::__construct('not');
     }
 
-    public function operate($term)
+    public function operate(Environment $env, $term)
     {
         return "not " . $term;
     }

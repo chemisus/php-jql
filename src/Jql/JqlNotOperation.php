@@ -3,6 +3,7 @@
 namespace Jql;
 
 use AbstractUnaryOperation;
+use Environment;
 
 class JqlNotOperation extends AbstractUnaryOperation
 {
@@ -11,7 +12,7 @@ class JqlNotOperation extends AbstractUnaryOperation
         parent::__construct('not');
     }
 
-    public function operate($term)
+    public function operate(Environment $env, $term)
     {
         return !$term;
     }

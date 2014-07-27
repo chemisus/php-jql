@@ -2,8 +2,8 @@
 
 namespace Jql;
 
-use AbstractBinaryOperation;
 use Environment;
+use AbstractBinaryOperation;
 
 class JqlAliasOperation extends AbstractBinaryOperation
 {
@@ -22,7 +22,7 @@ class JqlAliasOperation extends AbstractBinaryOperation
         return true;
     }
 
-    public function operate($a, $b)
+    public function operate(Environment $env, $a, $b)
     {
         return array($b => array_shift($a));
     }

@@ -9,11 +9,11 @@ class SqlCrossJoinOperation extends AbstractSoftValueTerm
 {
     public function __construct()
     {
-        parent::__construct('lj');
+        parent::__construct('cj');
     }
 
-    public function operate(Environment $env, $a)
+    public function operate(Environment $env, $v)
     {
-        return "cross join {$a}";
+        return "cross join " . $env->run($v);
     }
 }

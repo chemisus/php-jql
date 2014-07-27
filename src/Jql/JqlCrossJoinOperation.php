@@ -12,11 +12,11 @@ class JqlCrossJoinOperation extends AbstractSoftValueTerm
         parent::__construct('cj');
     }
 
-    public function run(Environment $env, $term)
+    public function operate(Environment $env, $v)
     {
         $results = array();
 
-        foreach ($this->runA($env, $env->get($term, 'a')) as $table => $rows) {
+        foreach ($env->run($v) as $table => $rows) {
             foreach ($rows as $row) {
 
                 $current = array_merge($env->current(), array($table => $row));
@@ -31,10 +31,5 @@ class JqlCrossJoinOperation extends AbstractSoftValueTerm
         }
 
         return $results;
-    }
-
-    public function operate($a, $b)
-    {
-        // TODO: Implement operate() method.
     }
 }

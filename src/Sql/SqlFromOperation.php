@@ -3,6 +3,7 @@
 namespace Sql;
 
 use AbstractUnaryOperation;
+use Environment;
 
 class SqlFromOperation extends AbstractUnaryOperation
 {
@@ -11,7 +12,7 @@ class SqlFromOperation extends AbstractUnaryOperation
         parent::__construct('from');
     }
 
-    public function operate($term)
+    public function operate(Environment $env, $term)
     {
         return "from " . $term;
     }

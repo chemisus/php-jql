@@ -22,7 +22,7 @@ class SqlSubqueryOperation extends AbstractBinaryOperation
         return true;
     }
 
-    public function operate($a, $b)
+    public function operate(Environment $env, $a, $b)
     {
         return "({$a}) as \"{$b}\"";
     }

@@ -3,6 +3,7 @@
 namespace Sql;
 
 use AbstractBinaryOperation;
+use Environment;
 
 class SqlLesserThanOperation extends AbstractBinaryOperation
 {
@@ -11,7 +12,7 @@ class SqlLesserThanOperation extends AbstractBinaryOperation
         parent::__construct('lt');
     }
 
-    public function operate($a, $b)
+    public function operate(Environment $env, $a, $b)
     {
         return "{$a}<{$b}";
     }

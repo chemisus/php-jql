@@ -166,4 +166,12 @@ class RawQueryBuilder
             ->set('b', $b)
             ->build();
     }
+
+    public function crossJoin($v)
+    {
+        return $this->term_builder
+            ->make('cj')
+            ->set('v', $v)
+            ->build();
+    }
 }

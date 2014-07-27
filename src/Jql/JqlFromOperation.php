@@ -12,7 +12,7 @@ class JqlFromOperation extends AbstractTerm
         parent::__construct('from');
     }
 
-    public function operate($term)
+    public function operate(Environment $env, $term)
     {
         return !$term;
     }

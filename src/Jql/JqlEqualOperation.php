@@ -3,6 +3,7 @@
 namespace Jql;
 
 use AbstractBinaryOperation;
+use Environment;
 
 class JqlEqualOperation extends AbstractBinaryOperation
 {
@@ -11,7 +12,7 @@ class JqlEqualOperation extends AbstractBinaryOperation
         parent::__construct('equal');
     }
 
-    public function operate($a, $b)
+    public function operate(Environment $env, $a, $b)
     {
         return $a === $b;
     }

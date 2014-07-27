@@ -2,9 +2,8 @@
 
 namespace Jql;
 
-use AbstractTernaryOperation;
-use Environment;
 use AbstractBinaryOperation;
+use Environment;
 
 class JqlRightJoinOperation extends AbstractBinaryOperation
 {
@@ -34,7 +33,7 @@ class JqlRightJoinOperation extends AbstractBinaryOperation
         return $results;
     }
 
-    public function operate($a, $b)
+    public function operate(Environment $env, $a, $b)
     {
         // TODO: Implement operate() method.
     }

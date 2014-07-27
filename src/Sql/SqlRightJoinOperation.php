@@ -3,6 +3,7 @@
 namespace Sql;
 
 use AbstractBinaryOperation;
+use Environment;
 
 class SqlRightJoinOperation extends AbstractBinaryOperation
 {
@@ -11,7 +12,7 @@ class SqlRightJoinOperation extends AbstractBinaryOperation
         parent::__construct('rj');
     }
 
-    public function operate($a, $b)
+    public function operate(Environment $env, $a, $b)
     {
         return "right join {$a} on {$b}";
     }

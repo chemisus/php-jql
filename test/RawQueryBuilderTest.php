@@ -382,7 +382,7 @@ class RawQueryBuilderTest extends TestCase
             ' "likes"."id" as "like_id",' .
             ' "likes"."user_id",' .
             ' "likes"."book_id"' .
-            ' from "users" left join "books" on true left join "likes" on true';
+            ' from "users" cross join "books" cross join "likes"';
         $jql = array(
             array('id' => 1, 'name' => "terrence", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 1, 'user_id' => 1, 'book_id' => 1),
             array('id' => 1, 'name' => "terrence", 'book' => 1, 'title' => "C++", 'author_id' => 1, 'like_id' => 2, 'user_id' => 1, 'book_id' => 3),
