@@ -106,8 +106,6 @@ class QueryTest extends TestCase
             ->join('users', 'users.id', 'author_id')
             ->get();
 
-        var_dump($actual);
-
         $this->assertEquals($expect, $actual);
     }
 }
