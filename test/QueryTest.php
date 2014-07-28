@@ -223,4 +223,28 @@ class QueryTest extends TestCase
 
         $this->assertEquals($expect, $actual);
     }
+
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testFields(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('name' => 'terrence', 'title' => 'Java',),
+        );
+
+        $actual = $qb->query()
+            ->select('name')
+            ->select('title')
+            ->from('users')
+            ->join('books', 'books.author_id', 'users.id')
+            ->fields(array(
+                'name' => 'terrence',
+                'title' => 'Java',
+            ))
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
 }

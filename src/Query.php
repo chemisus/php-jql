@@ -74,6 +74,15 @@ class Query
         return $this;
     }
 
+    public function fields($values)
+    {
+        foreach ($values as $key => $value) {
+            $this->where($key, $value);
+        }
+
+        return $this;
+    }
+
     public function build()
     {
         $me = $this;
@@ -98,8 +107,6 @@ class Query
 
     public function get()
     {
-        var_dump($this->env->run($this->build()));
-
         return $this->env->execute($this->build());
     }
 }
