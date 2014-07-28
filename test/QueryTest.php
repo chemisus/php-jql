@@ -174,4 +174,53 @@ class QueryTest extends TestCase
 
         $this->assertEquals($expect, $actual);
     }
+
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testWhereNameNickOrTitleJava(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('name' => 'terrence', 'title' => 'Java',),
+        );
+
+        $actual = $qb->query()
+            ->select('name')
+            ->select('title')
+            ->from('books')
+            ->join('users', 'users.id', 'author_id')
+            ->where('name', 'nick')
+            ->orWhere(function ($query) {
+                $query->where('title', 'Java');
+            })
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @dataProvider queryBuilderProvider
+     */
+    public function testWhereTitleJavaOrNameNick(QueryBuilder $qb)
+    {
+        $expect = array(
+            array('name' => 'terrence', 'title' => 'Java',),
+            array('name' => 'nick', 'title' => null),
+        );
+
+        $actual = $qb->query()
+            ->select('name')
+            ->select('title')
+            ->from('users')
+            ->join('books', 'books.author_id', 'users.id')
+            ->where('name', 'nick')
+            ->orWhere(function ($query) {
+                $query->where('title', 'Java');
+            })
+            ->get();
+
+        $this->assertEquals($expect, $actual);
+    }
 }

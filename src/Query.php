@@ -60,6 +60,20 @@ class Query
         return $this;
     }
 
+    public function orWhere(callable $callback)
+    {
+        $this->ors[] = $this->ands;
+
+        $qb = new Query($this->env, $this->terms);
+        $callback($qb);
+        $q = $qb->build();
+
+        $this->ors[] = $this->env->get($this->env->get($q, 'w'), 'v');
+        $this->ands = array();
+
+        return $this;
+    }
+
     public function build()
     {
         $me = $this;
@@ -84,6 +98,8 @@ class Query
 
     public function get()
     {
+        var_dump($this->env->run($this->build()));
+
         return $this->env->execute($this->build());
     }
 }
