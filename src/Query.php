@@ -6,10 +6,11 @@ class Query
     private $froms = array();
     private $ors = array();
     private $ands = array();
+    private $reader;
 
-    public function __construct(Environment $env, TermAssembler $terms)
+    public function __construct(TermReader $reader, TermAssembler $terms)
     {
-        $this->env = $env;
+        $this->reader = $reader;
         $this->terms = $terms;
     }
 
@@ -26,11 +27,18 @@ class Query
 
     /**
      * @param $table
+     * @param string|null $alias
      * @return $this
      */
-    public function from($table)
+    public function from($table, $alias = null)
     {
-        $this->froms[] = $this->terms->from($this->terms->table($table));
+        $from = $this->terms->table($table);
+
+        if ($alias !== null) {
+            $from = $this->terms->alias($from, $alias);
+        }
+
+        $this->froms[] = $this->terms->from($from);
 
         return $this;
     }
@@ -64,17 +72,17 @@ class Query
     {
         $this->ors[] = $this->ands;
 
-        $qb = new Query($this->env, $this->terms);
+        $qb = new Query($this->reader, $this->terms);
         $callback($qb);
         $q = $qb->build();
 
-        $this->ors[] = $this->env->get($this->env->get($q, 'w'), 'v');
+        $this->ors[] = $this->reader->get($this->reader->get($q, 'w'), 'v');
         $this->ands = array();
 
         return $this;
     }
 
-    public function fields($values)
+    public function find($values)
     {
         foreach ($values as $key => $value) {
             $this->where($key, $value);
@@ -103,10 +111,5 @@ class Query
             $this->froms,
             $where
         );
-    }
-
-    public function get()
-    {
-        return $this->env->execute($this->build());
     }
 }

@@ -39,18 +39,19 @@ class QueryTest extends TestCase
         $jql_a = new Jql\JqlEnvironment($atb, $jdb);
 
         return array(
-            array(new QueryBuilder($sql_o, $oqb)),
-            array(new QueryBuilder($jql_o, $oqb)),
-            array(new QueryBuilder($sql_a, $aqb)),
-            array(new QueryBuilder($jql_a, $aqb)),
+            array(new QueryBuilder($otb, $oqb), $sql_o),
+            array(new QueryBuilder($otb, $oqb), $jql_o),
+            array(new QueryBuilder($atb, $aqb), $sql_a),
+            array(new QueryBuilder($atb, $aqb), $jql_a),
         );
     }
 
     /**
      * @param QueryBuilder $qb
+     * @param Environment $env
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectIdFromUsers(QueryBuilder $qb)
+    public function testSelectIdFromUsers(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('id' => 1),
@@ -58,19 +59,18 @@ class QueryTest extends TestCase
             array('id' => 3),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('id')
-            ->from('users')
-            ->get();
+            ->from('users');
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectIdAndAuthorFromBooks(QueryBuilder $qb)
+    public function testSelectIdAndAuthorFromBooks(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('id' => 1, 'author_id' => 1),
@@ -78,20 +78,19 @@ class QueryTest extends TestCase
             array('id' => 3, 'author_id' => 2),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('id')
             ->select('author_id')
-            ->from('books')
-            ->get();
+            ->from('books');
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testSelectIdAndAuthorFromBooksLeftJoinUser(QueryBuilder $qb)
+    public function testSelectIdAndAuthorFromBooksLeftJoinUser(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('name' => 'terrence', 'title' => 'C++',),
@@ -99,93 +98,89 @@ class QueryTest extends TestCase
             array('name' => 'jessica', 'title' => 'PHP',),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('name')
             ->select('title')
             ->from('books')
-            ->join('users', 'users.id', 'author_id')
-            ->get();
+            ->join('users', 'users.id', 'author_id');
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testWhereName(QueryBuilder $qb)
+    public function testWhereName(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('name' => 'terrence', 'title' => 'C++',),
             array('name' => 'terrence', 'title' => 'Java',),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('name')
             ->select('title')
             ->from('books')
             ->join('users', 'users.id', 'author_id')
-            ->where('name', 'terrence')
-            ->get();
+            ->where('name', 'terrence');
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testWhereNameAndTitle(QueryBuilder $qb)
+    public function testWhereNameAndTitle(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('name' => 'terrence', 'title' => 'C++',),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('name')
             ->select('title')
             ->from('books')
             ->join('users', 'users.id', 'author_id')
             ->where('name', 'terrence')
-            ->where('title', 'C++')
-            ->get();
+            ->where('title', 'C++');
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testWhereNameAndTitleJava(QueryBuilder $qb)
+    public function testWhereNameAndTitleJava(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('name' => 'terrence', 'title' => 'Java',),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('name')
             ->select('title')
             ->from('books')
             ->join('users', 'users.id', 'author_id')
             ->where('name', 'terrence')
-            ->where('title', 'Java')
-            ->get();
+            ->where('title', 'Java');
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testWhereNameNickOrTitleJava(QueryBuilder $qb)
+    public function testWhereNameNickOrTitleJava(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('name' => 'terrence', 'title' => 'Java',),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('name')
             ->select('title')
             ->from('books')
@@ -193,24 +188,23 @@ class QueryTest extends TestCase
             ->where('name', 'nick')
             ->orWhere(function ($query) {
                 $query->where('title', 'Java');
-            })
-            ->get();
+            });
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testWhereTitleJavaOrNameNick(QueryBuilder $qb)
+    public function testWhereTitleJavaOrNameNick(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('name' => 'terrence', 'title' => 'Java',),
             array('name' => 'nick', 'title' => null),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('name')
             ->select('title')
             ->from('users')
@@ -218,33 +212,31 @@ class QueryTest extends TestCase
             ->where('name', 'nick')
             ->orWhere(function ($query) {
                 $query->where('title', 'Java');
-            })
-            ->get();
+            });
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 
     /**
      * @param QueryBuilder $qb
      * @dataProvider queryBuilderProvider
      */
-    public function testFields(QueryBuilder $qb)
+    public function testFind(QueryBuilder $qb, Environment $env)
     {
         $expect = array(
             array('name' => 'terrence', 'title' => 'Java',),
         );
 
-        $actual = $qb->query()
+        $query = $qb->query()
             ->select('name')
             ->select('title')
             ->from('users')
             ->join('books', 'books.author_id', 'users.id')
-            ->fields(array(
+            ->find(array(
                 'name' => 'terrence',
                 'title' => 'Java',
-            ))
-            ->get();
+            ));
 
-        $this->assertEquals($expect, $actual);
+        $this->assertEquals($expect, $env->execute($query->build()));
     }
 }

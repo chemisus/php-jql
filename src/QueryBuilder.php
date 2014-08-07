@@ -2,17 +2,17 @@
 
 class QueryBuilder
 {
-    private $env;
+    private $reader;
     private $terms;
 
-    public function __construct(Environment $env, TermAssembler $terms)
+    public function __construct(TermReader $reader, TermAssembler $terms)
     {
-        $this->env = $env;
+        $this->reader = $reader;
         $this->terms = $terms;
     }
 
     public function query()
     {
-        return new Query($this->env, $this->terms);
+        return new Query($this->reader, $this->terms);
     }
 }
